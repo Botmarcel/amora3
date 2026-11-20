@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMORA³ — Rede social privada para adultos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary:   #A6192E;
+      --primary-dk:#7A1220;
+      --bg:        #0B0B0B;
+      --text:      #FFFFFF;
+      --muted:     #D1D1D1;
+      --border:    rgba(255,255,255,.12);
+      --card-bg:   rgba(255,255,255,.06);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    /* ── Fundo colmeia (metal perfurado) ── */
+    body {
+      font-family: 'Inter', system-ui, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      background-image: radial-gradient(circle at 50% 20%, #161616 0%, var(--bg) 65%);
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      pointer-events: none;
+      opacity: .45;
+      background-image:
+        radial-gradient(circle, #000 4px, transparent 5px),
+        radial-gradient(circle, #000 4px, transparent 5px);
+      background-size: 22px 26px;
+      background-position: 0 0, 11px 13px;
+      z-index: 0;
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ══ HEADER ══════════════════════════════════ */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    header img { height: 42px; }
+    nav {
+      display: flex;
+      gap: 28px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .18s;
+    }
+    nav a:hover { color: #fff; }
+
+    .btn {
+      background: var(--primary);
+      color: #fff;
+      border: 0;
+      padding: 11px 22px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background .18s, transform .15s;
+      height: 42px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+    }
+    .btn:hover { background: var(--primary-dk); transform: translateY(-1px); }
+
+    .btn-sm {
+      height: 36px;
+      font-size: 13px;
+      padding: 0 18px;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0 22px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      transition: border-color .18s, color .18s;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,.35); color: #fff; }
+
+    .btn-ghost-sm {
+      height: 36px;
+      font-size: 13px;
+      padding: 0 18px;
+    }
+
+    /* ══ HERO ════════════════════════════════════ */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 48px;
+      align-items: center;
+      padding: 72px 0 60px;
+    }
+    .hero-logo {
+      width: 100%;
+      max-width: 500px;
+      display: block;
+    }
+    .hero h1 {
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin: 20px 0 14px;
+    }
+    .hero p {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+    .hero-cta {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    /* card lateral hero */
+    .hero-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+    }
+    .hero-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+    .plan-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .plan-row:last-of-type { border-bottom: none; }
+    .plan-row span:first-child { color: var(--muted); }
+    .price-tag {
+      font-weight: 700;
+      color: #fff;
+    }
+    .price-tag.free { color: #4ade80; }
+    .hero-card p.note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: #888;
+      line-height: 1.6;
+    }
+
+    /* ══ SECTION TITLE ═══════════════════════════ */
+    .section { padding: 56px 0; }
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 15px;
+      margin-bottom: 32px;
+    }
+
+    /* ══ FUNCIONALIDADES (6 cards) ═══════════════ */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 20px;
+    }
+    .card-icon { font-size: 26px; margin-bottom: 12px; }
+    .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .card p { color: var(--muted); font-size: 13px; line-height: 1.55; }
+
+    /* ══ PREÇOS ══════════════════════════════════ */
+    .grid-price {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .price-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .price-card.destaque {
+      border-color: var(--primary);
+      background: rgba(166, 25, 46, .10);
+    }
+    .price-card .label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .price-card .label.vinho { color: #e06070; }
+    .price-card .value {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .price-card .value span { font-size: 16px; font-weight: 400; color: var(--muted); }
+    .price-card .value.free-val { color: #4ade80; font-size: 26px; }
+    .price-card ul {
+      list-style: none;
+      margin: 18px 0 22px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .price-card ul li {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      gap: 8px;
+    }
+    .price-card ul li::before { content: "✓"; color: var(--primary); font-weight: 700; flex-shrink: 0; }
+
+    /* ══ EMBAIXADOR ══════════════════════════════ */
+    .embaixador {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .embaixador h2 { font-size: 24px; font-weight: 800; margin-bottom: 12px; }
+    .embaixador p { color: var(--muted); font-size: 15px; line-height: 1.6; }
+    .embaixador ul {
+      list-style: none;
+      margin: 16px 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .embaixador ul li {
+      font-size: 14px;
+      color: var(--muted);
+      display: flex;
+      gap: 10px;
+    }
+    .embaixador ul li::before { content: "🎁"; flex-shrink: 0; }
+
+    /* ══ MOTEL ═══════════════════════════════════ */
+    .motel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .motel h2 { font-size: 22px; font-weight: 800; margin-bottom: 10px; }
+    .motel p { color: var(--muted); font-size: 14px; line-height: 1.65; }
+
+    /* ══ TERMO ═══════════════════════════════════ */
+    .termo {
+      background: rgba(166,25,46,.08);
+      border: 1px solid rgba(166,25,46,.25);
+      border-radius: 16px;
+      padding: 24px 28px;
+    }
+    .termo h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+    .termo p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ══ FOOTER ══════════════════════════════════ */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #666;
+      font-size: 13px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    footer img { height: 28px; opacity: .7; }
+
+    /* ══ BADGE EM BREVE ══════════════════════════ */
+    .badge-soon {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(166,25,46,.15);
+      border: 1px solid rgba(166,25,46,.35);
+      color: #e06070;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .badge-soon::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: #e06070;
+      border-radius: 50%;
+      animation: blink 1.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ══ DIVIDER ══════════════════════════════ */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* ══ RESPONSIVE ══════════════════════════════ */
+    @media (max-width: 900px) {
+      .grid-3    { grid-template-columns: 1fr 1fr; }
+      .grid-price{ grid-template-columns: 1fr; }
+      .embaixador, .motel { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .hero { grid-template-columns: 1fr; text-align: center; }
+      .hero-cta { justify-content: center; }
+      .hero-logo { max-width: 300px; margin: 0 auto; }
+      nav { display: none; }
+      .grid-3 { grid-template-columns: 1fr; }
+      footer { justify-content: center; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══ HEADER ══ -->
+  <header>
+    <img src="logo-amora3.png" alt="AMORA³">
+    <nav>
+      <a href="#funcionalidades">Funcionalidades</a>
+      <a href="#precos">Preços</a>
+      <a href="#embaixador">Embaixador</a>
+      <a href="#motel">Motel</a>
+      <a href="#termo">Termo</a>
+    </nav>
+    <a class="btn btn-sm" href="cadastro.html">Quero ser Fundador</a>
+  </header>
+
+  <!-- ══ HERO ══ -->
+  <section class="hero">
+    <div>
+      <div class="badge-soon">Em breve &nbsp;•&nbsp; Lançamento</div>
+      <img class="hero-logo" src="logo-amora3.png" alt="AMORA³">
+      <h1>Rede social privada para adultos</h1>
+      <p>Comunidade para casais liberais e mulheres solo, com verificação real, chat privado, foto rastreável e privacidade por distância.</p>
+      <div class="hero-cta">
+        <a class="btn" href="cadastro.html">Quero ser Fundador</a>
+        <a class="btn-ghost" href="#funcionalidades">Ver como funciona</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <h3>Para quem é?</h3>
+      <div class="plan-row"><span>Casal liberal</span><span class="price-tag" style="color:#e06070">Em breve</span></div>
+      <div class="plan-row"><span>Mulher solo</span><span class="price-tag" style="color:#e06070">Em breve</span></div>
+      <div class="plan-row"><span>Homem solo</span><span class="price-tag" style="color:#e06070">Em breve</span></div>
+      <p class="note">Verificação com selfie + vídeo • Chat só dentro da plataforma • Foto com marca d'água • Bloqueio por distância • Blur de rosto • Anti-assédio • Regra Nº1</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══ FUNCIONALIDADES ══ -->
+  <section class="section" id="funcionalidades">
+    <div class="section-title">Funcionalidades</div>
+    <div class="section-sub">Tudo pensado para você se sentir seguro e no controle.</div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-icon">🛡️</div>
+        <h3>Verificação Anti-Fake</h3>
+        <p>Selfie + vídeo de 3 segundos. Selo de verificado no perfil. Sem fake, sem bot.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💬</div>
+        <h3>Chat Privado</h3>
+        <p>Só dentro da AMORA³, só com like mútuo. Sem passar telefone, sem exposição.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📸</div>
+        <h3>Foto Rastreável</h3>
+        <p>Marca d'água por visualizador. Anti-print, foto que some. Se vazar, identifica quem foi.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📍</div>
+        <h3>Bloqueio por Distância</h3>
+        <p>Escolha raio de 50 km ou mais. Ninguém da sua cidade vê seu perfil.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎁</div>
+        <h3>Programa Embaixador</h3>
+        <p>Indicação gera cupom para sorteio mensal. Prêmios nacionais para membros ativos.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏨</div>
+        <h3>Motel Parceiro</h3>
+        <p>Desconto exclusivo + Terceiro Liberado registrado na plataforma, sem taxa extra.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══ PREÇOS ══ -->
+  <section class="section" id="precos">
+    <div class="section-title">Planos Fundadores</div>
+    <div class="section-sub">Preços especiais para os primeiros membros. Garanta agora.</div>
+    <div class="grid-price">
+      <div class="price-card destaque">
+        <div class="label vinho">★ Casal Liberal</div>
+        <div class="value" style="font-size:22px;color:#e06070">Em breve</div>
+        <ul>
+          <li>Perfil de casal unificado</li>
+          <li>Terceiro Liberado registrado</li>
+          <li>Motel parceiro com desconto</li>
+          <li>Prioridade no matching</li>
+          <li>Chat privado com match</li>
+        </ul>
+        <a class="btn" style="width:100%;justify-content:center" href="cadastro.html">Quero ser Fundador</a>
+      </div>
+      <div class="price-card">
+        <div class="label">Mulher Solo</div>
+        <div class="value" style="font-size:22px;color:#e06070">Em breve</div>
+        <ul>
+          <li>Perfil verificado</li>
+          <li>Chat privado com match</li>
+          <li>Foto rastreável</li>
+          <li>Bloqueio por distância</li>
+          <li>Anti-assédio ativo</li>
+        </ul>
+        <a class="btn" style="width:100%;justify-content:center" href="cadastro.html">Entrar na lista</a>
+      </div>
+      <div class="price-card">
+        <div class="label">Homem Solo</div>
+        <div class="value" style="font-size:22px;color:#e06070">Em breve</div>
+        <ul>
+          <li>Perfil verificado</li>
+          <li>Chat privado com match</li>
+          <li>Foto rastreável</li>
+          <li>Bloqueio por distância</li>
+          <li>Acesso a casais que liberaram</li>
+        </ul>
+        <a class="btn-ghost" style="width:100%;justify-content:center" href="cadastro.html">Entrar na lista</a>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══ EMBAIXADOR ══ -->
+  <section class="section" id="embaixador">
+    <div class="embaixador">
+      <div>
+        <div class="section-title">Programa Embaixador</div>
+        <p>Indique amigos e ganhe cupons para o sorteio mensal. Quanto mais indicados verificados, mais chances de ganhar.</p>
+        <ul>
+          <li>Prêmios mensais para membros ativos</li>
+          <li>Sorteio transparente e registrado</li>
+          <li>Cupons acumulam a cada indicação</li>
+        </ul>
+        <a class="btn" href="#">Quero ser Embaixador</a>
+      </div>
+      <div class="card" style="text-align:center;padding:36px 24px">
+        <div style="font-size:48px;margin-bottom:16px">🏆</div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:8px">Sorteio Mensal</div>
+        <div style="font-size:13px;color:var(--muted)">1 indicação verificada = 1 cupom<br>Prêmios nacionais todo mês</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══ MOTEL ══ -->
+  <section class="section" id="motel">
+    <div class="motel">
+      <div>
+        <div class="section-title">Motel Parceiro</div>
+        <p>Encontros com mais privacidade. Desconto exclusivo para membros AMORA³ e registro de Terceiro Liberado diretamente na plataforma, sem custo extra.</p>
+        <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn" href="#">Ver motéis parceiros</a>
+          <a class="btn-ghost" href="#">Seja parceiro</a>
+        </div>
+      </div>
+      <div class="card" style="text-align:center;padding:36px 24px">
+        <div style="font-size:48px;margin-bottom:16px">🏨</div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:8px">Desconto Exclusivo</div>
+        <div style="font-size:13px;color:var(--muted)">Terceiro Liberado registrado<br>sem taxa extra para membros</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══ TERMO ══ -->
+  <section class="section" id="termo">
+    <div class="termo">
+      <h3>⚖️ Termos de Uso — Resumo</h3>
+      <p>
+        Plataforma exclusiva para maiores de 18 anos. É proibida a venda ou oferta de programas (prostituição). 
+        Todo conteúdo é monitorado. Perfis falsos são banidos permanentemente. 
+        O uso implica aceite das regras da comunidade. 
+        Fotos e vídeos enviados ficam rastreáveis ao usuário que os visualizou. 
+        A AMORA³ não se responsabiliza por encontros realizados fora da plataforma.
+      </p>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ══ -->
+  <footer>
+    <img src="logo-amora3.png" alt="AMORA³">
+    <span>AMORA³ • Rede social privada para adultos</span>
+    <span>contato@amora3.com.br &nbsp;•&nbsp; © 2026 &nbsp;•&nbsp; +18</span>
+  </footer>
+
+</div>
+</body>
+</html>

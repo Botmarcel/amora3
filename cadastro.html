@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMORA³ — Cadastro de Membro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary:    #A6192E;
+      --primary-dk: #7A1220;
+      --bg:         #0B0B0B;
+      --card-bg:    rgba(255, 255, 255, 0.05);
+      --border:     rgba(255, 255, 255, 0.12);
+      --text:       #FFFFFF;
+      --muted:      #A3A3A3;
+      --accent:     #E06070;
+      --success:    #4ADE80;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      background-image: radial-gradient(circle at 50% 15%, #181818 0%, var(--bg) 70%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 60px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      pointer-events: none;
+      opacity: .45;
+      background-image:
+        radial-gradient(circle, #000 4px, transparent 5px),
+        radial-gradient(circle, #000 4px, transparent 5px);
+      background-size: 22px 26px;
+      background-position: 0 0, 11px 13px;
+      z-index: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Header ── */
+    .header-logo {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .header-logo img {
+      height: 48px;
+      width: auto;
+    }
+    .header-tagline {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+      letter-spacing: .05em;
+    }
+
+    /* ── Stepper ── */
+    .stepper {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .stepper::before {
+      content: '';
+      position: absolute;
+      top: 18px;
+      left: 30px;
+      right: 30px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 0;
+    }
+    .step-progress-bar {
+      position: absolute;
+      top: 18px;
+      left: 30px;
+      height: 2px;
+      background: var(--primary);
+      z-index: 1;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+    .step-node {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .step-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #141414;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #888;
+      transition: all 0.25s ease;
+    }
+    .step-node.active .step-circle {
+      border-color: var(--accent);
+      color: #fff;
+      background: var(--primary);
+      box-shadow: 0 0 16px rgba(166, 25, 46, 0.5);
+    }
+    .step-node.done .step-circle {
+      border-color: var(--primary);
+      background: var(--primary-dk);
+      color: #fff;
+    }
+    .step-node.active { color: #fff; font-weight: 600; }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+    .step-header {
+      margin-bottom: 24px;
+    }
+    .step-header h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .step-header p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Forms ── */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #E5E5E5;
+    }
+    .form-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+    .input-field, .select-field, .textarea-field {
+      width: 100%;
+      background: rgba(15, 15, 15, 0.85);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .18s, box-shadow .18s;
+    }
+    .input-field:focus, .select-field:focus, .textarea-field:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(166, 25, 46, 0.25);
+    }
+    .textarea-field {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    /* ── Profile Selector (Cards) ── */
+    .profile-types {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .profile-option {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      user-select: none;
+    }
+    .profile-option:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .profile-option.selected {
+      border-color: var(--primary);
+      background: rgba(166, 25, 46, 0.16);
+      box-shadow: 0 0 18px rgba(166, 25, 46, 0.35);
+    }
+    .profile-icon {
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+    .profile-title {
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .profile-desc {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ── Checkboxes & Toggles ── */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .check-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--muted);
+      transition: all .2s;
+    }
+    .check-btn input { display: none; }
+    .check-btn.checked {
+      border-color: var(--accent);
+      background: rgba(166, 25, 46, 0.2);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* ── Switch Banner ── */
+    .privacy-toggle-box {
+      background: rgba(166, 25, 46, 0.08);
+      border: 1px solid rgba(166, 25, 46, 0.3);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .privacy-text h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .privacy-text p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; inset: 0;
+      background-color: #333;
+      transition: .3s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute; content: "";
+      height: 18px; width: 18px;
+      left: 3px; bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider { background-color: var(--primary); }
+    input:checked + .slider:before { transform: translateX(20px); }
+
+    /* ── Verification Badge Box ── */
+    .verification-card {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .verif-icon {
+      font-size: 34px;
+      margin-bottom: 10px;
+    }
+    .verif-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .verif-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 6px 0 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Buttons ── */
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 28px;
+    }
+    .btn {
+      background: var(--primary);
+      color: #fff;
+      border: 0;
+      padding: 0 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: background .18s, transform .15s;
+    }
+    .btn:hover { background: var(--primary-dk); transform: translateY(-1px); }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color .18s, color .18s;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+
+    /* ── Footer note ── */
+    .footer-note {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 12px;
+      color: #666;
+    }
+    .footer-note a { color: var(--accent); text-decoration: none; }
+
+    /* ── Step Visibility ── */
+    .step-content { display: none; }
+    .step-content.active { display: block; animation: fadeIn .3s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 580px) {
+      .profile-types { grid-template-columns: 1fr; }
+      .checkbox-grid { grid-template-columns: 1fr; }
+      .card { padding: 24px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ── Header / Logo ── -->
+  <div class="header-logo">
+    <a href="index.html">
+      <img src="logo-amora3.png" alt="AMORA³">
+    </a>
+    <div class="header-tagline">CADASTRO PRIVADO DE MEMBROS • +18</div>
+  </div>
+
+  <!-- ── Progress Stepper ── -->
+  <div class="stepper">
+    <div class="step-progress-bar" id="progressBar"></div>
+    <div class="step-node active" id="node1">
+      <div class="step-circle">1</div>
+      <span>Perfil</span>
+    </div>
+    <div class="step-node" id="node2">
+      <div class="step-circle">2</div>
+      <span>Interesses</span>
+    </div>
+    <div class="step-node" id="node3">
+      <div class="step-circle">3</div>
+      <span>Sua Bio</span>
+    </div>
+    <div class="step-node" id="node4">
+      <div class="step-circle">4</div>
+      <span>Segurança</span>
+    </div>
+  </div>
+
+  <!-- ── Formulário Multi-Step ── -->
+  <div class="card">
+    <form id="signupForm" onsubmit="event.preventDefault();">
+
+      <!-- ══════════════════════════════════════════
+           PASSO 1: TIPO DE CONTA & CREDENCIAIS
+      ══════════════════════════════════════════ -->
+      <div class="step-content active" id="step1">
+        <div class="step-header">
+          <h2>Como você quer se cadastrar?</h2>
+          <p>Selecione seu perfil. Sua identidade real nunca é exibida publicamente.</p>
+        </div>
+
+        <div class="profile-types">
+          <div class="profile-option selected" onclick="selectProfile('casal', this)">
+            <div class="profile-icon">👫</div>
+            <div class="profile-title">Casal Liberal</div>
+            <div class="profile-desc">Perfil unificado a dois</div>
+          </div>
+          <div class="profile-option" onclick="selectProfile('mulher', this)">
+            <div class="profile-icon">💃</div>
+            <div class="profile-title">Mulher Solo</div>
+            <div class="profile-desc">Discreta e independente</div>
+          </div>
+          <div class="profile-option" onclick="selectProfile('homem', this)">
+            <div class="profile-icon">🕺</div>
+            <div class="profile-title">Homem Solo</div>
+            <div class="profile-desc">Respeitoso e direto</div>
+          </div>
+        </div>
+        <input type="hidden" id="profileType" value="casal">
+
+        <div class="form-group">
+          <label class="form-label" for="nickname">Nome de usuário / Nickname</label>
+          <input type="text" id="nickname" class="input-field" placeholder="Ex: casal_quente, barbudo_sp, lua_cheia" required>
+          <div class="form-hint">Este é o nome que outros membros verão no seu perfil e nas suas postagens.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">E-mail de acesso (100% sigiloso)</label>
+          <input type="email" id="email" class="input-field" placeholder="seu-email@exemplo.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Criar senha</label>
+          <input type="password" id="password" class="input-field" placeholder="Mínimo 6 caracteres" required>
+        </div>
+
+        <div class="btn-row" style="justify-content: flex-end;">
+          <button type="button" class="btn" onclick="nextStep(2)">Continuar</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           PASSO 2: PREFERÊNCIAS & LOCALIZAÇÃO
+      ══════════════════════════════════════════ -->
+      <div class="step-content" id="step2">
+        <div class="step-header">
+          <h2>Localização & Quem você busca</h2>
+          <p>Defina onde você está e quem você tem interesse em encontrar.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label" for="uf">Estado</label>
+            <select id="uf" class="select-field">
+              <option value="SP">SP</option>
+              <option value="RJ">RJ</option>
+              <option value="MG">MG</option>
+              <option value="PR">PR</option>
+              <option value="SC">SC</option>
+              <option value="RS">RS</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="city">Cidade</label>
+            <input type="text" id="city" class="input-field" placeholder="Ex: Campinas, São Paulo, Santos" required>
+          </div>
+        </div>
+
+        <!-- O que busca (filtro estrito de interesse) -->
+        <div class="form-group">
+          <label class="form-label">Quem você quer conhecer? (Interesses)</label>
+          <div class="checkbox-grid">
+            <label class="check-btn checked">
+              <input type="checkbox" checked onchange="toggleCheck(this)"> 👫 Casais
+            </label>
+            <label class="check-btn checked">
+              <input type="checkbox" checked onchange="toggleCheck(this)"> 💃 Mulheres
+            </label>
+            <label class="check-btn">
+              <input type="checkbox" onchange="toggleCheck(this)"> 🕺 Homens
+            </label>
+          </div>
+          <div class="form-hint">Só pessoas que se encaixam no seu filtro conseguirão dar match e conversar com você.</div>
+        </div>
+
+        <!-- Bloqueio por Distância (Privacidade exclusiva AMORA³) -->
+        <div class="privacy-toggle-box">
+          <div class="privacy-text">
+            <h4>🔒 Ocultar perfil na minha cidade (Raio de 50km)</h4>
+            <p>Vizinhos, conhecidos e pessoas a menos de 50km não conseguirão achar seu perfil.</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" checked id="privacyDistance">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn-ghost" onclick="nextStep(1)">Voltar</button>
+          <button type="button" class="btn" onclick="nextStep(3)">Continuar</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           PASSO 3: SUA BIO & PRIMEIRA POSTAGEM
+      ══════════════════════════════════════════ -->
+      <div class="step-content" id="step3">
+        <div class="step-header">
+          <h2>Bio e Primeira Postagem</h2>
+          <p>No seu perfil da AMORA³ você terá sua linha do tempo para compartilhar pensamentos, fantasias e fotos.</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="statusPhrase">Frase de status / Título curto</label>
+          <input type="text" id="statusPhrase" class="input-field" placeholder="Ex: Sexo real e sem tabus • Bom papo e discrição">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="bio">Bio do seu perfil (seus limites e gostos)</label>
+          <textarea id="bio" class="textarea-field" placeholder="Conte o que você e/ou seu par curtem, o que esperam da comunidade e o que não toleram..."></textarea>
+          <div class="form-hint">Exemplo: 'Casal discreto de Campinas. Buscamos encontros reais, com calma, respeito e boa conversa antes.'</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="firstPost">Sua primeira postagem no Feed (opcional)</label>
+          <textarea id="firstPost" class="textarea-field" style="min-height:75px;" placeholder="Diga um 'Olá' para a comunidade ou compartilhe o que está procurando hoje..."></textarea>
+          <div class="form-hint">Essa mensagem já vai aparecer no mural do seu perfil assim que a conta for liberada.</div>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn-ghost" onclick="nextStep(2)">Voltar</button>
+          <button type="button" class="btn" onclick="nextStep(4)">Continuar</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           PASSO 4: SEGURANÇA, REGRAS & FINALIZAÇÃO
+      ══════════════════════════════════════════ -->
+      <div class="step-content" id="step4">
+        <div class="step-header">
+          <h2>Segurança e Regras de Ouro</h2>
+          <p>A AMORA³ é um ambiente exclusivo e seguro para adultos reais.</p>
+        </div>
+
+        <!-- Box Verificação Anti-Fake -->
+        <div class="verification-card">
+          <div class="verif-icon">🛡️</div>
+          <div class="verif-title">Verificação Anti-Fake</div>
+          <div class="verif-desc">
+            Para garantir que não há fakes, curiosos ou golpistas, você receberá a instrução para envio de um vídeo rápido de 3 segundos com um gesto aleatório. 
+            <strong>Seu vídeo NUNCA será publicado</strong> — ele serve apenas para liberar seu <strong>Selo de Verificado</strong>.
+          </div>
+          <div style="font-size:12px; color:var(--accent); font-weight:600;">
+            ✓ Sem robôs &nbsp;•&nbsp; ✓ Sem fotos de terceiros &nbsp;•&nbsp; ✓ Pessoas 100% reais
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="check-btn checked" style="justify-content: flex-start; margin-bottom: 8px;">
+            <input type="checkbox" checked required> 🔞 Confirmo que sou maior de 18 anos
+          </label>
+          <label class="check-btn checked" style="justify-content: flex-start; margin-bottom: 8px;">
+            <input type="checkbox" checked required> 🚫 Ciente de que é estritamente proibida venda de conteúdo e prostituição
+          </label>
+          <label class="check-btn checked" style="justify-content: flex-start;">
+            <input type="checkbox" checked required> 🔒 Concordo com a tolerância zero a assédio e exposição indevida
+          </label>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn-ghost" onclick="nextStep(3)">Voltar</button>
+          <button type="button" class="btn" onclick="finishSignup()" style="background:#4ADE80; color:#000; font-weight:800;">
+            Concluir Cadastro Fundador
+          </button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           TELA DE SUCESSO / CONFIRMAÇÃO
+      ══════════════════════════════════════════ -->
+      <div class="step-content" id="stepSuccess" style="text-align: center; padding: 20px 10px;">
+        <div style="font-size: 54px; margin-bottom: 14px;">🎉</div>
+        <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 10px;">Cadastro Reservado com Sucesso!</h2>
+        <p style="color: var(--muted); font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
+          Seu apelido <strong id="successNick" style="color:#fff;"></strong> foi pré-reservado no grupo de <strong>Membros Fundadores</strong>.
+          <br>Enviamos as orientações de ativação e verificação anti-fake para o seu e-mail.
+        </p>
+
+        <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 24px; text-align: left;">
+          <div style="font-size: 13px; font-weight: 700; margin-bottom: 6px;">Seu perfil na AMORA³ incluirá:</div>
+          <div style="font-size: 12px; color: var(--muted); line-height: 1.8;">
+            ✓ Selo Fundador Verificado<br>
+            ✓ Mural de Postagens e Fotos com marca d'água<br>
+            ✓ Chat privado somente com matches mútuos<br>
+            ✓ Bloqueio por distância ativo
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px; flex-direction:column;">
+          <a id="verifyNowBtn" href="verificacao.html" class="btn" style="width: 100%; justify-content: center; background:#4ADE80; color:#000; font-weight:800;">
+            🛡️ Fazer Verificação Anti-Fake Agora (3s)
+          </a>
+          <a id="viewProfileBtn" href="perfil.html" class="btn-ghost" style="width: 100%; justify-content: center;">
+            Ver Meu Perfil
+          </a>
+          <a href="index.html" style="font-size:12px; color:var(--muted); text-decoration:none; margin-top:4px;">Voltar para o Início</a>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="footer-note">
+    Já tem uma conta? <a href="#">Acessar Login</a> • <a href="index.html">Página Principal</a>
+  </div>
+
+</div>
+
+<script>
+  let currentStep = 1;
+
+  function selectProfile(type, el) {
+    document.querySelectorAll('.profile-option').forEach(card => card.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('profileType').value = type;
+  }
+
+  function toggleCheck(input) {
+    if (input.checked) {
+      input.parentElement.classList.add('checked');
+    } else {
+      input.parentElement.classList.remove('checked');
+    }
+  }
+
+  function nextStep(step) {
+    // Validação básica do passo 1
+    if (step > 1 && currentStep === 1) {
+      const nick = document.getElementById('nickname').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const pass = document.getElementById('password').value.trim();
+      if (!nick || !email || !pass) {
+        alert('Por favor, preencha seu Nickname, E-mail e Senha para continuar.');
+        return;
+      }
+    }
+
+    currentStep = step;
+
+    // Atualiza cards visíveis
+    document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + step).classList.add('active');
+
+    // Atualiza nodes do stepper
+    for (let i = 1; i <= 4; i++) {
+      const node = document.getElementById('node' + i);
+      node.classList.remove('active', 'done');
+      if (i === step) {
+        node.classList.add('active');
+      } else if (i < step) {
+        node.classList.add('done');
+      }
+    }
+
+    // Atualiza barra de progresso
+    const progressPercent = ((step - 1) / 3) * 100;
+    document.getElementById('progressBar').style.width = progressPercent + '%';
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function finishSignup() {
+    const btn = event.target;
+    btn.disabled = true;
+    const originalText = btn.innerText;
+    btn.innerText = 'Salvando no banco de dados...';
+
+    const seekingChecks = document.querySelectorAll('#step2 .check-btn input');
+    const seekingCasais = seekingChecks[0] ? seekingChecks[0].checked : true;
+    const seekingMulheres = seekingChecks[1] ? seekingChecks[1].checked : true;
+    const seekingHomens = seekingChecks[2] ? seekingChecks[2].checked : false;
+
+    const payload = {
+      profileType: document.getElementById('profileType').value,
+      nickname: document.getElementById('nickname').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      password: document.getElementById('password').value.trim(),
+      uf: document.getElementById('uf').value,
+      city: document.getElementById('city').value.trim(),
+      seekingCasais,
+      seekingMulheres,
+      seekingHomens,
+      hideDistance: document.getElementById('privacyDistance') ? document.getElementById('privacyDistance').checked : true,
+      statusPhrase: document.getElementById('statusPhrase').value.trim(),
+      bio: document.getElementById('bio').value.trim(),
+      firstPost: document.getElementById('firstPost').value.trim()
+    };
+
+    try {
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || 'Erro ao realizar cadastro.');
+        btn.disabled = false;
+        btn.innerText = originalText;
+        return;
+      }
+
+      document.getElementById('successNick').innerText = '@' + data.user.nickname;
+      const verifyBtn = document.getElementById('verifyNowBtn');
+      if (verifyBtn) {
+        verifyBtn.href = 'verificacao.html?u=' + data.user.nickname;
+      }
+      const viewBtn = document.getElementById('viewProfileBtn');
+      if (viewBtn) {
+        viewBtn.href = 'perfil.html?u=' + data.user.nickname;
+      }
+      document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
+      document.getElementById('stepSuccess').classList.add('active');
+      document.querySelector('.stepper').style.display = 'none';
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      console.error(err);
+      alert('Erro de conexão com o servidor. Tente novamente.');
+      btn.disabled = false;
+      btn.innerText = originalText;
+    }
+  }
+</script>
+
+</body>
+</html>

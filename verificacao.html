@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMORA³ — Verificação Anti-Fake</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary:    #A6192E;
+      --primary-dk: #7A1220;
+      --bg:         #0B0B0B;
+      --card-bg:    rgba(255, 255, 255, 0.05);
+      --border:     rgba(255, 255, 255, 0.12);
+      --text:       #FFFFFF;
+      --muted:      #A3A3A3;
+      --accent:     #E06070;
+      --success:    #4ADE80;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      background-image: radial-gradient(circle at 50% 15%, #181818 0%, var(--bg) 70%);
+      padding: 30px 16px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      pointer-events: none;
+      opacity: .45;
+      background-image:
+        radial-gradient(circle, #000 4px, transparent 5px),
+        radial-gradient(circle, #000 4px, transparent 5px);
+      background-size: 22px 26px;
+      background-position: 0 0, 11px 13px;
+      z-index: 0;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 600px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Header ── */
+    .header-logo {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .header-logo img { height: 44px; width: auto; }
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(74, 222, 128, 0.12);
+      border: 1px solid rgba(74, 222, 128, 0.35);
+      color: var(--success);
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-top: 10px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lead-text {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .guarantees {
+      display: flex;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 24px;
+      font-size: 12px;
+      color: var(--muted);
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .guarantees span { color: var(--accent); font-weight: 600; }
+
+    /* ── Desafio de Gesto ── */
+    .challenge-box {
+      background: rgba(166, 25, 46, 0.12);
+      border: 1px solid rgba(166, 25, 46, 0.35);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .challenge-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .challenge-icon {
+      font-size: 52px;
+      margin: 8px 0;
+      line-height: 1;
+    }
+    .challenge-text {
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .challenge-tip {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .btn-reroll {
+      background: transparent;
+      border: 0;
+      color: var(--muted);
+      font-size: 11px;
+      cursor: pointer;
+      margin-top: 10px;
+      text-decoration: underline;
+    }
+    .btn-reroll:hover { color: #fff; }
+
+    /* ── Câmera e Gravação ── */
+    .camera-container {
+      position: relative;
+      width: 100%;
+      height: 340px;
+      background: #000;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1); /* espelha câmera frontal */
+    }
+    #reviewVideo {
+      transform: none; /* vídeo gravado não precisa espelhar */
+    }
+
+    .camera-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    /* ── Contador Regressivo (Overlay) ── */
+    .timer-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 10;
+    }
+    .timer-circle {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+      font-weight: 900;
+      box-shadow: 0 0 30px rgba(166, 25, 46, 0.8);
+      animation: pulse 1s infinite alternate;
+    }
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.08); }
+    }
+    .timer-label {
+      margin-top: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: .05em;
+    }
+
+    /* ── Botões ── */
+    .btn {
+      background: var(--primary);
+      color: #fff;
+      border: 0;
+      padding: 0 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: background .18s, transform .15s;
+      width: 100%;
+    }
+    .btn:hover { background: var(--primary-dk); transform: translateY(-1px); }
+    .btn-success { background: var(--success); color: #000; }
+    .btn-success:hover { background: #3ec974; }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      transition: border-color .18s, color .18s;
+    }
+    .btn-ghost:hover { border-color: rgba(255, 255, 255, 0.3); color: #fff; }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .file-fallback {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .file-fallback label {
+      color: var(--accent);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* ── Tela Sucesso ── */
+    #successView {
+      display: none;
+      text-align: center;
+      padding: 30px 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="header-logo">
+    <a href="index.html">
+      <img src="logo-amora3.png" alt="AMORA³">
+    </a>
+    <div>
+      <span class="header-badge">🛡️ Central de Segurança</span>
+    </div>
+  </div>
+
+  <div class="card" id="mainCard">
+
+    <!-- ── Visualização Principal ── -->
+    <div id="verifyView">
+      <h2 class="section-title">Verificação Anti-Fake</h2>
+      <p class="lead-text">
+        Para garantir que não há fakes, curiosos ou golpistas, você receberá a instrução para envio de um <strong>vídeo rápido de 3 segundos com um gesto aleatório</strong>. 
+        Seu vídeo <strong>NUNCA será publicado</strong> — ele serve apenas para liberar seu <strong>Selo de Verificado</strong>.
+      </p>
+
+      <div class="guarantees">
+        <div><span>✓</span> Sem robôs</div>
+        <div><span>✓</span> Sem fotos de terceiros</div>
+        <div><span>✓</span> Pessoas 100% reais</div>
+      </div>
+
+      <!-- Desafio Sorteado -->
+      <div class="challenge-box">
+        <div class="challenge-label">Seu Gesto Sorteado de Hoje</div>
+        <div class="challenge-icon" id="challengeIcon">✌️</div>
+        <div class="challenge-text" id="challengeText">Sinal da Paz (dois dedos em V)</div>
+        <div class="challenge-tip" id="challengeTip">Posicione a mão ao lado do rosto e sorria</div>
+        <button type="button" class="btn-reroll" onclick="fetchChallenge()">Sortear outro gesto 🎲</button>
+      </div>
+
+      <!-- Área de Vídeo / Câmera -->
+      <div class="camera-container">
+        
+        <div class="camera-placeholder" id="camPlaceholder">
+          <div style="font-size: 40px;">📹</div>
+          <div>Ligue a câmera frontal do seu aparelho para gravar os 3 segundos.</div>
+          <button class="btn" style="width: auto; padding: 0 20px; height: 38px;" onclick="startCamera()">
+            Ativar Câmera
+          </button>
+        </div>
+
+        <video id="previewVideo" autoplay playsinline muted style="display: none;"></video>
+        <video id="reviewVideo" controls autoplay loop playsinline style="display: none;"></video>
+
+        <!-- Contador Regressivo -->
+        <div class="timer-overlay" id="timerOverlay">
+          <div class="timer-circle" id="timerCount">3</div>
+          <div class="timer-label" id="timerLabel">FAÇA O GESTO E SORRIA</div>
+        </div>
+
+      </div>
+
+      <!-- Ações da Câmera -->
+      <div id="camActions" style="display: none;">
+        <button class="btn" id="recordBtn" onclick="startCountdownRecording()">
+          🔴 Iniciar Gravação (3 segundos)
+        </button>
+      </div>
+
+      <!-- Ações de Envio pós-gravação -->
+      <div id="reviewActions" style="display: none;">
+        <div class="btn-group">
+          <button class="btn-ghost" onclick="retakeVideo()">🔄 Gravar de Novo</button>
+          <button class="btn btn-success" id="submitBtn" onclick="submitVerification()">
+            ✓ Enviar para Verificação
+          </button>
+        </div>
+      </div>
+
+      <div class="file-fallback">
+        Problemas com a câmera? <label for="videoFileInput">Clique aqui para enviar um arquivo de vídeo do celular</label>
+        <input type="file" id="videoFileInput" accept="video/*" style="display: none;" onchange="handleFileSelect(this)">
+      </div>
+
+    </div>
+
+    <!-- ── Tela de Sucesso ── -->
+    <div id="successView">
+      <div style="font-size: 56px; margin-bottom: 14px;">🎉</div>
+      <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 10px;">Verificação Concluída!</h2>
+      <p style="color: var(--muted); font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
+        Seu vídeo foi processado de forma segura e o <strong>Selo de Verificado</strong> foi liberado para o seu perfil.
+      </p>
+
+      <div style="background: rgba(74, 222, 128, 0.08); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 14px; padding: 18px; margin-bottom: 24px;">
+        <div style="font-size: 16px; font-weight: 700; color: var(--success); margin-bottom: 6px;">
+          ✓ Membro Verificado Oficial
+        </div>
+        <div style="font-size: 12px; color: var(--muted);">
+          Você agora possui prioridade de visibilidade, acesso total aos casais e confiança máxima na comunidade.
+        </div>
+      </div>
+
+      <a id="profileLink" href="perfil.html" class="btn btn-success">Ir para Meu Perfil Verificado</a>
+    </div>
+
+  </div>
+
+  <div style="text-align: center; font-size: 12px; color: #666;">
+    AMORA³ • Segurança e Privacidade Máxima • © 2026
+  </div>
+
+</div>
+
+<script>
+  let currentGestureCode = 'paz';
+  let mediaStream = null;
+  let mediaRecorder = null;
+  let recordedChunks = [];
+  let recordedBlob = null;
+
+  // Carrega desafio aleatório do servidor
+  async function fetchChallenge() {
+    try {
+      const res = await fetch('/api/verification/challenge');
+      const data = await res.json();
+      const g = data.gesture;
+      currentGestureCode = g.id;
+      document.getElementById('challengeIcon').innerText = g.icon;
+      document.getElementById('challengeText').innerText = g.text;
+      document.getElementById('challengeTip').innerText = g.tip;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  // Ativa câmera do usuário
+  async function startCamera() {
+    try {
+      mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 720 } },
+        audio: false
+      });
+
+      const preview = document.getElementById('previewVideo');
+      preview.srcObject = mediaStream;
+      preview.style.display = 'block';
+      document.getElementById('camPlaceholder').style.display = 'none';
+      document.getElementById('camActions').style.display = 'block';
+    } catch (err) {
+      alert('Não foi possível acessar a câmera. Você pode usar a opção de envio de arquivo logo abaixo.');
+      console.error(err);
+    }
+  }
+
+  // Contagem regressiva e gravação exata de 3 segundos
+  function startCountdownRecording() {
+    const timerOverlay = document.getElementById('timerOverlay');
+    const timerCount = document.getElementById('timerCount');
+    const timerLabel = document.getElementById('timerLabel');
+    const recordBtn = document.getElementById('recordBtn');
+
+    recordBtn.disabled = true;
+    timerOverlay.style.display = 'flex';
+
+    let countdown = 3;
+    timerCount.innerText = countdown;
+    timerLabel.innerText = 'PREPARE-SE: FAÇA O GESTO';
+
+    const countInterval = setInterval(() => {
+      countdown--;
+      if (countdown > 0) {
+        timerCount.innerText = countdown;
+      } else {
+        clearInterval(countInterval);
+        timerLabel.innerText = 'GRAVANDO VÍDEO (3s)...';
+        timerCount.innerText = '🔴';
+        startActualRecording();
+      }
+    }, 1000);
+  }
+
+  function startActualRecording() {
+    recordedChunks = [];
+    const mimeTypes = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4'];
+    let selectedMime = mimeTypes.find(m => MediaRecorder.isTypeSupported(m)) || '';
+
+    try {
+      mediaRecorder = new MediaRecorder(mediaStream, selectedMime ? { mimeType: selectedMime } : {});
+    } catch (e) {
+      mediaRecorder = new MediaRecorder(mediaStream);
+    }
+
+    mediaRecorder.ondataavailable = e => {
+      if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = () => {
+      recordedBlob = new Blob(recordedChunks, { type: selectedMime || 'video/webm' });
+      document.getElementById('timerOverlay').style.display = 'none';
+      
+      // Para o preview ao vivo e mostra o vídeo gravado
+      document.getElementById('previewVideo').style.display = 'none';
+      const review = document.getElementById('reviewVideo');
+      review.src = URL.createObjectURL(recordedBlob);
+      review.style.display = 'block';
+
+      document.getElementById('camActions').style.display = 'none';
+      document.getElementById('reviewActions').style.display = 'block';
+    };
+
+    mediaRecorder.start();
+
+    // Grava exatamente 3 segundos e para
+    setTimeout(() => {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+      }
+    }, 3200);
+  }
+
+  function retakeVideo() {
+    recordedBlob = null;
+    document.getElementById('reviewVideo').style.display = 'none';
+    document.getElementById('previewVideo').style.display = 'block';
+    document.getElementById('reviewActions').style.display = 'none';
+    document.getElementById('camActions').style.display = 'block';
+    document.getElementById('recordBtn').disabled = false;
+  }
+
+  function handleFileSelect(input) {
+    if (input.files && input.files[0]) {
+      recordedBlob = input.files[0];
+      document.getElementById('camPlaceholder').style.display = 'none';
+      document.getElementById('previewVideo').style.display = 'none';
+      const review = document.getElementById('reviewVideo');
+      review.src = URL.createObjectURL(recordedBlob);
+      review.style.display = 'block';
+      document.getElementById('camActions').style.display = 'none';
+      document.getElementById('reviewActions').style.display = 'block';
+    }
+  }
+
+  async function submitVerification() {
+    if (!recordedBlob) {
+      alert('Grave ou selecione o vídeo de 3 segundos.');
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerText = 'Enviando ao Bunny Storage seguro...';
+
+    // Pega o ID ou apelido da URL (ex: verificacao.html?u=casal_liberdade)
+    const urlParams = new URLSearchParams(window.location.search);
+    const userNick = urlParams.get('u') || 'casal_liberdade';
+
+    try {
+      // 1. Busca o ID do usuário pelo apelido
+      const userRes = await fetch(`/api/profile/${userNick}`);
+      const userData = await userRes.json();
+      const userId = userData.profile ? userData.profile.id : null;
+
+      if (!userId) {
+        alert('Perfil não encontrado para vincular a verificação.');
+        btn.disabled = false;
+        btn.innerText = '✓ Enviar para Verificação';
+        return;
+      }
+
+      // 2. Envia o vídeo via FormData
+      const formData = new FormData();
+      formData.append('video', recordedBlob, `verif_${currentGestureCode}.webm`);
+      formData.append('userId', userId);
+      formData.append('gestureCode', currentGestureCode);
+
+      const uploadRes = await fetch('/api/verification/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const resData = await uploadRes.json();
+
+      if (!uploadRes.ok) {
+        alert(resData.error || 'Erro ao enviar vídeo.');
+        btn.disabled = false;
+        btn.innerText = '✓ Enviar para Verificação';
+        return;
+      }
+
+      // Sucesso!
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+      }
+
+      document.getElementById('verifyView').style.display = 'none';
+      document.getElementById('successView').style.display = 'block';
+      document.getElementById('profileLink').href = `perfil.html?u=${userNick}`;
+
+    } catch (err) {
+      console.error(err);
+      alert('Erro de conexão ao enviar o vídeo.');
+      btn.disabled = false;
+      btn.innerText = '✓ Enviar para Verificação';
+    }
+  }
+
+  fetchChallenge();
+</script>
+
+</body>
+</html>
