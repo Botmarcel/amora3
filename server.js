@@ -1,28 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const { Pool } = require('pg');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
-
-// Carregar variáveis do arquivo .env automaticamente se existir
-const envPath = path.join(__dirname, '.env');
-if (fs.existsSync(envPath)) {
-  const envLines = fs.readFileSync(envPath, 'utf8').split('\n');
-  envLines.forEach(line => {
-    const trimmed = line.trim();
-    if (trimmed && !trimmed.startsWith('#')) {
-      const idx = trimmed.indexOf('=');
-      if (idx !== -1) {
-        const key = trimmed.substring(0, idx).trim();
-        const val = trimmed.substring(idx + 1).trim().replace(/^["']|["']$/g, '');
-        if (!process.env[key]) process.env[key] = val;
-      }
-    }
-  });
-}
 
 const app = express();
 const PORT = process.env.PORT || 80;
@@ -30,14 +12,7 @@ const PORT = process.env.PORT || 80;
 // Configurações do Bunny.net Storage & CDN
 const BUNNY_STORAGE_ENDPOINT = process.env.BUNNY_STORAGE_ENDPOINT || 'https://br.storage.bunnycdn.com/amora3';
 const BUNNY_CDN_URL = process.env.BUNNY_CDN_URL || 'https://amora3.b-cdn.net';
-const BUNNY_ACCESS_KEY = process.env.BUNNY_ACCESS_KEY || '';
-
-// Configurações do Gateway de Pagamento ASAAS
-const ASAAS_API_KEY = process.env.ASAAS_API_KEY || '';
-const ASAAS_ENV = process.env.ASAAS_ENV || 'sandbox'; // 'sandbox' ou 'production'
-const ASAAS_BASE_URL = ASAAS_ENV === 'production' 
-  ? 'https://api.asaas.com/v3' 
-  : 'https://sandbox.asaas.com/api/v3';
+const BUNNY_ACCESS_KEY = process.env.BUNNY_ACCESS_KEY || 'dbc547d7-7576-4101-8365bfebf525-af69-4740';
 
 // Upload em MEMÓRIA (as fotos nunca tocam no disco da VPS!)
 const upload = multer({
@@ -50,7 +25,7 @@ const pool = new Pool({
   host: process.env.DB_HOST || 'amora3_db',
   port: parseInt(process.env.DB_PORT || '5432'),
   user: process.env.DB_USER || 'amora3_admin',
-  password: process.env.DB_PASSWORD || '',
+  password: process.env.DB_PASSWORD || 'Amora3_Secret_Db_2026!',
   database: process.env.DB_NAME || 'amora3',
 });
 
@@ -171,7 +146,7 @@ app.post('/api/verification/upload', upload.single('video'), async (req, res) =>
 // ──────────────────────────────────────────────────────────
 // ROTAS DO PAINEL DO ADMINISTRADOR (ADMIN)
 // ──────────────────────────────────────────────────────────
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'AmoraAdmin@2026!';
 const adminTokens = new Set(['amora3_master_session_token']);
 
 // Middleware de autenticação de admin
@@ -422,73 +397,6 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-
-// ──────────────────────────────────────────────────────────
-// ROTA: Login do Membro (POST /api/login)
-// ──────────────────────────────────────────
-app.post('/api/login', async (req, res) => {
-  try {
-    const { email, nickname, login, password } = req.body;
-    const identificador = (login || email || nickname || '').toString().trim().toLowerCase();
-
-    if (!identificador || !password) {
-      return res.status(400).json({ error: 'Informe e-mail ou apelido e senha.' });
-    }
-
-    // Busca por e-mail OU por apelido, tanto faz o que a pessoa digitar
-    const userRes = await pool.query(
-      `SELECT u.id, u.nickname, u.email, u.password_hash, u.profile_type,
-              u.is_verified, u.is_founder, u.is_subscriber,
-              u.subscription_expires_at, u.created_at,
-              p.city, p.uf, p.avatar_url, p.status_phrase, p.bio
-       FROM users u
-       LEFT JOIN profiles p ON p.user_id = u.id
-       WHERE LOWER(u.email) = $1 OR LOWER(u.nickname) = $1
-       LIMIT 1`,
-      [identificador]
-    );
-
-    if (userRes.rows.length === 0) {
-      return res.status(401).json({ error: 'E-mail/apelido ou senha incorretos.' });
-    }
-
-    const user = userRes.rows[0];
-
-    // Compara a senha digitada com a senha criptografada salva no cadastro
-    const senhaCorreta = await bcrypt.compare(password, user.password_hash);
-    if (!senhaCorreta) {
-      return res.status(401).json({ error: 'E-mail/apelido ou senha incorretos.' });
-    }
-
-    // Nunca devolver a senha, nem a criptografada
-    delete user.password_hash;
-
-    return res.json({
-      success: true,
-      message: 'Login realizado com sucesso!',
-      user: {
-        id: user.id,
-        nickname: user.nickname,
-        email: user.email,
-        profileType: user.profile_type,
-        isVerified: user.is_verified,
-        isFounder: user.is_founder,
-        isSubscriber: user.is_subscriber,
-        subscriptionExpiresAt: user.subscription_expires_at,
-        city: user.city,
-        uf: user.uf,
-        avatarUrl: user.avatar_url,
-        statusPhrase: user.status_phrase,
-        bio: user.bio,
-        createdAt: user.created_at
-      }
-    });
-  } catch (err) {
-    console.error('Erro no login:', err);
-    return res.status(500).json({ error: 'Erro interno ao fazer login. Tente novamente.' });
-  }
-});
-
 // ──────────────────────────────────────────────────────────
 // ROTA: Obter Perfil e Postagens (GET /api/profile/:nickname)
 // ──────────────────────────────────────────────────────────
@@ -552,306 +460,6 @@ app.post('/api/posts', async (req, res) => {
   } catch (err) {
     console.error('Erro ao criar postagem:', err);
     return res.status(500).json({ error: 'Erro ao criar postagem.' });
-  }
-});
-
-// ──────────────────────────────────────────────────────────
-// MÓDULO ASAAS & CUPONS DE PAGAMENTO / DEGUSTAÇÃO 30 DIAS
-// ──────────────────────────────────────────────────────────
-
-// Inicializar tabelas de cupons e pagamentos
-async function initPaymentTables() {
-  try {
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS coupons (
-        id SERIAL PRIMARY KEY,
-        code VARCHAR(50) UNIQUE NOT NULL,
-        discount_percent INTEGER DEFAULT 100,
-        trial_days INTEGER DEFAULT 30,
-        max_uses INTEGER DEFAULT 500,
-        used_count INTEGER DEFAULT 0,
-        is_active BOOLEAN DEFAULT TRUE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-
-      CREATE TABLE IF NOT EXISTS payments (
-        id SERIAL PRIMARY KEY,
-        asaas_payment_id VARCHAR(100) UNIQUE,
-        user_nickname VARCHAR(100),
-        user_email VARCHAR(255),
-        plan VARCHAR(50),
-        amount NUMERIC(10,2),
-        status VARCHAR(50) DEFAULT 'PENDING',
-        pix_payload TEXT,
-        pix_qr_image TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        paid_at TIMESTAMP
-      );
-
-      ALTER TABLE users ADD COLUMN IF NOT EXISTS is_subscriber BOOLEAN DEFAULT FALSE;
-      ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_expires_at TIMESTAMP;
-      ALTER TABLE users ADD COLUMN IF NOT EXISTS used_coupon VARCHAR(50);
-    `);
-
-    await pool.query(`
-      INSERT INTO coupons (code, discount_percent, trial_days, max_uses, is_active)
-      VALUES 
-        ('AMORA30', 100, 30, 500, TRUE),
-        ('AMORA30VIP', 100, 30, 500, TRUE),
-        ('DEGUSTA30', 100, 30, 500, TRUE)
-      ON CONFLICT (code) DO NOTHING;
-    `);
-    console.log('Tabelas de pagamentos e cupons prontas.');
-  } catch (err) {
-    console.warn('Aviso: banco de dados ainda não conectado para pagamentos:', err.message);
-  }
-}
-initPaymentTables();
-
-// ROTA: Validar Cupom de Desconto
-app.post('/api/coupons/validate', async (req, res) => {
-  try {
-    const { code } = req.body;
-    if (!code) return res.status(400).json({ error: 'Código obrigatório' });
-    const cleanCode = code.trim().toUpperCase();
-
-    // Cupons padrão em memória para funcionamento imediato
-    const defaultCoupons = ['AMORA30', 'AMORA30VIP', 'DEGUSTA30', 'FUNDADORFREE'];
-    if (defaultCoupons.includes(cleanCode)) {
-      return res.json({ valid: true, code: cleanCode, trialDays: 30, discount: 100 });
-    }
-
-    try {
-      const dbRes = await pool.query('SELECT * FROM coupons WHERE code = $1 AND is_active = TRUE', [cleanCode]);
-      if (dbRes.rows.length > 0) {
-        const c = dbRes.rows[0];
-        if (c.max_uses && c.used_count >= c.max_uses) {
-          return res.status(400).json({ valid: false, error: 'Cupom atingiu o limite de usos.' });
-        }
-        return res.json({ valid: true, code: c.code, trialDays: c.trial_days, discount: c.discount_percent });
-      }
-    } catch (e) {}
-
-    return res.status(400).json({ valid: false, error: 'Cupom inválido ou expirado.' });
-  } catch (err) {
-    return res.status(500).json({ error: 'Erro ao validar cupom.' });
-  }
-});
-
-// ROTA: Ativar 30 Dias Gratuitos via Cupom
-app.post('/api/coupons/activate-trial', async (req, res) => {
-  try {
-    const { nickname, email, plan, coupon } = req.body;
-    if (!nickname || !email) {
-      return res.status(400).json({ error: 'Apelido e e-mail são obrigatórios.' });
-    }
-
-    const cleanNick = nickname.trim().toLowerCase();
-    const cleanEmail = email.trim().toLowerCase();
-
-    try {
-      // Atualizar ou garantir que o usuário está cadastrado com 30 dias de assinatura
-      await pool.query(`
-        UPDATE users 
-        SET is_subscriber = TRUE, 
-            subscription_expires_at = NOW() + INTERVAL '30 days',
-            used_coupon = $1
-        WHERE LOWER(nickname) = $2 OR LOWER(email) = $3
-      `, [coupon || 'DEGUSTA30', cleanNick, cleanEmail]);
-
-      // Incrementar contador do cupom
-      if (coupon) {
-        await pool.query('UPDATE coupons SET used_count = used_count + 1 WHERE code = $1', [coupon.toUpperCase()]);
-      }
-    } catch (dbErr) {
-      console.warn('Banco não atualizado para cupom (modo fallback):', dbErr.message);
-    }
-
-    return res.json({
-      success: true,
-      message: '30 dias de acesso gratuito ativados com sucesso!',
-      expiresInDays: 30
-    });
-  } catch (err) {
-    return res.status(500).json({ error: 'Erro ao ativar teste gratuito.' });
-  }
-});
-
-// ROTA: Criar Cobrança PIX via ASAAS
-app.post('/api/payments/create-pix', async (req, res) => {
-  try {
-    const { nickname, email, cpf, plan, value } = req.body;
-    if (!nickname || !email || !value) {
-      return res.status(400).json({ error: 'Dados incompletos.' });
-    }
-
-    // Se a chave do Asaas foi definida, chamamos a API oficial do Asaas
-    if (ASAAS_API_KEY && ASAAS_API_KEY.length > 10) {
-      try {
-        // Gerador de CPF de teste se estiver em sandbox e não foi fornecido
-        let finalCpf = cpf ? cpf.replace(/\D/g, '') : null;
-        if (!finalCpf && ASAAS_ENV === 'sandbox') {
-          finalCpf = '80365625450';
-        }
-
-        // 1. Criar ou buscar cliente no Asaas
-        const custBody = {
-          name: nickname,
-          email: email,
-          externalReference: nickname
-        };
-        if (finalCpf) custBody.cpfCnpj = finalCpf;
-
-        const custRes = await fetch(`${ASAAS_BASE_URL}/customers`, {
-          method: 'POST',
-          headers: {
-            'access_token': ASAAS_API_KEY,
-            'Content-Type': 'application/json',
-            'User-Agent': 'AMORA3'
-          },
-          body: JSON.stringify(custBody)
-        });
-        const custData = await custRes.json();
-        const customerId = custData.id;
-
-        if (!customerId) {
-          console.error('Erro ao criar cliente no Asaas:', custData);
-          return res.status(400).json({ error: custData.errors?.[0]?.description || 'Erro ao cadastrar cliente no Asaas.' });
-        }
-
-        // 2. Criar cobrança PIX no Asaas
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const dueDate = tomorrow.toISOString().split('T')[0];
-
-        const payRes = await fetch(`${ASAAS_BASE_URL}/payments`, {
-          method: 'POST',
-          headers: {
-            'access_token': ASAAS_API_KEY,
-            'Content-Type': 'application/json',
-            'User-Agent': 'AMORA3'
-          },
-          body: JSON.stringify({
-            customer: customerId,
-            billingType: 'PIX',
-            value: parseFloat(value),
-            dueDate: dueDate,
-            description: `AMORA3 - Assinatura ${plan}`,
-            externalReference: nickname
-          })
-        });
-        const payData = await payRes.json();
-
-        if (!payData.id) {
-          console.error('Erro ao criar cobrança no Asaas:', payData);
-          return res.status(400).json({ error: payData.errors?.[0]?.description || 'Erro ao gerar pagamento no Asaas.' });
-        }
-
-        // 3. Obter QR Code do PIX
-        const qrRes = await fetch(`${ASAAS_BASE_URL}/payments/${payData.id}/pixQrCode`, {
-          headers: { 
-            'access_token': ASAAS_API_KEY,
-            'User-Agent': 'AMORA3'
-          }
-        });
-        const qrData = await qrRes.json();
-
-        // Salvar no banco
-        try {
-          await pool.query(`
-            INSERT INTO payments (asaas_payment_id, user_nickname, user_email, plan, amount, status, pix_payload, pix_qr_image)
-            VALUES ($1, $2, $3, $4, $5, 'PENDING', $6, $7)
-          `, [payData.id, nickname, email, plan, value, qrData.payload || '', qrData.encodedImage || '']);
-        } catch (e) {}
-
-        return res.json({
-          success: true,
-          paymentId: payData.id,
-          pix: {
-            encodedImage: qrData.encodedImage || null,
-            payload: qrData.payload || `00020126580014br.gov.bcb.pix0136amora3-sandbox520400005303986540${value}5802BR5913AMORA36009SAOPAULO62070503***6304E8A1`
-          }
-        });
-      } catch (asaasErr) {
-        console.error('Erro na chamada Asaas:', asaasErr);
-        return res.status(500).json({ error: 'Erro de comunicação com o Asaas.' });
-      }
-    }
-
-    // Modo Demonstração / Sandbox sem chave configurada ainda
-    const mockPaymentId = `pay_${Date.now()}`;
-    const mockPayload = `00020126580014br.gov.bcb.pix0136amora3-pagamento-asaas520400005303986540${value}5802BR5913AMORA3_LTDA6009SAO_PAULO62070503***6304E8A1`;
-    return res.json({
-      success: true,
-      mode: 'demonstracao_asaas',
-      paymentId: mockPaymentId,
-      pix: {
-        payload: mockPayload,
-        encodedImage: null
-      }
-    });
-  } catch (err) {
-    return res.status(500).json({ error: 'Erro ao gerar PIX.' });
-  }
-});
-
-// ROTA: Checar Status do Pagamento (Polling)
-app.get('/api/payments/status/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (ASAAS_API_KEY && ASAAS_API_KEY.length > 10) {
-      const checkRes = await fetch(`${ASAAS_BASE_URL}/payments/${id}`, {
-        headers: { 'access_token': ASAAS_API_KEY }
-      });
-      const checkData = await checkRes.json();
-      return res.json({ status: checkData.status });
-    }
-
-    // Fallback de teste
-    return res.json({ status: 'PENDING' });
-  } catch (err) {
-    return res.status(500).json({ error: 'Erro ao consultar status.' });
-  }
-});
-
-// ROTA: WEBHOOK DO ASAAS (Recebimento Automático de Notificações de Pagamento)
-app.post('/api/webhooks/asaas', async (req, res) => {
-  try {
-    const { event, payment } = req.body;
-    console.log(`[ASAAS WEBHOOK] Evento recebido: ${event}`, payment ? payment.id : '');
-
-    // Se o pagamento foi recebido ou confirmado
-    if (event === 'PAYMENT_RECEIVED' || event === 'PAYMENT_CONFIRMED') {
-      const paymentId = payment.id;
-      const clientNick = payment.externalReference;
-
-      try {
-        // Atualizar status na tabela payments
-        await pool.query(`
-          UPDATE payments 
-          SET status = 'CONFIRMED', paid_at = CURRENT_TIMESTAMP 
-          WHERE asaas_payment_id = $1
-        `, [paymentId]);
-
-        // Ativar assinatura do usuário no PostgreSQL
-        if (clientNick) {
-          await pool.query(`
-            UPDATE users 
-            SET is_subscriber = TRUE, 
-                subscription_expires_at = NOW() + INTERVAL '30 days'
-            WHERE LOWER(nickname) = LOWER($1)
-          `, [clientNick]);
-        }
-      } catch (dbErr) {
-        console.error('Erro ao atualizar banco via Webhook Asaas:', dbErr);
-      }
-    }
-
-    return res.status(200).json({ received: true });
-  } catch (err) {
-    console.error('Erro no processamento do webhook Asaas:', err);
-    return res.status(500).json({ error: 'Erro interno no webhook.' });
   }
 });
 
