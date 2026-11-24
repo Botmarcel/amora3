@@ -1,0 +1,35 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AMORA³ - vive a liberdade.</title>
+  <link rel="icon" type="image/png" href="favicon.png"><link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="topo">
+  <div class="logo-topo" onclick="mostrar('inicio')"><img src="logo-amora3-320.png" alt="AMORA³" class="logo-img"></div>
+  <nav><button class="navbtn active" onclick="mostrar('inicio')">Início</button><button class="navbtn" onclick="mostrar('feed')">Feed</button><button class="navbtn" onclick="mostrar('conta')">Criar conta</button></nav>
+  <div class="topo-dir"><span class="pill" id="status">Conectando...</span><span class="badge18">🛡️ +18</span><button id="btnSair" class="ghost small" onclick="sair()" style="display:none">Sair</button></div>
+</header>
+<main>
+<section id="view-inicio" class="view">
+  <div class="hero">
+    <div class="botoes-topo"><button class="cta" onclick="mostrar('conta')">＋ Criar conta</button><button class="cta ghost" onclick="mostrar('conta')">→ Entrar</button></div>
+    <p class="hero-sub2">Leva menos de 2 minutos • Só para maiores de 18 anos</p>
+    <div class="selos"><span class="selo">🔒 REDE PRIVADA • +18</span><span class="selo branco">✓ VERIFICAÇÃO ATIVA</span></div>
+    <div class="aviso">Só assinantes verificados publicam. Curtir é livre, chat só assinante.</div>
+    <h1>Conecte-se com quem<br>vive a <span class="lib">liberdade.</span></h1>
+    <p class="hero-desc">Uma rede privada para adultos, com perfis verificados, chat privado, fotos rastreáveis e bloqueio por distância. Discrição, consentimento e controle nas suas mãos.</p>
+    <div class="botoes-hero"><button class="cta" onclick="mostrar('conta')">Criar conta</button><button class="cta ghost" onclick="mostrar('conta')">Entrar</button></div>
+    <div class="botoes-hero"><button class="cta ghost" onclick="document.getElementById('func').scrollIntoView()">Como funciona</button><button class="cta ghost" onclick="mostrar('feed')">Ver feed</button></div>
+  </div>
+  <div class="wrap" id="func"><h2>Funcionalidades</h2><div class="cards">
+    <div class="card destaque"><h3>Diversidade com Transparência 🌈</h3><p>Nós apoiamos, respeitamos e acolhemos toda opção. No AMORA³ todo mundo tem lugar.</p><p><b>Orgulho de ser você.<br>Respeito a Todos.</b></p><small>⚠ Gêneros e opção sexual dissonante do cadastro serão bloqueados.</small></div>
+    <div class="card"><h3>Chat privado ilimitado</h3><p>Converse sem limite, com controle de quem pode te chamar.</p><small>*opção disponível para assinantes</small></div>
+    <div class="card"><h3>Bloqueio por distância (50km+)</h3><p>Defina um raio e fique invisível para quem está perto demais.</p><small>*mais privacidade, aquela sua vizinha bisbilhoteira não precisa saber...</small></div>
+    <div class="card"><h3>Selo perfil de Verificado</h3><p>Só conversa assinante que passou pela verificação de documento + foto real.</p><small>*nada de perfil fake !</small></div>
+    <div class="card"><h3>Fotos mais seguras..</h3><p>Componentes de segurança, Blur e camadas de proteção pra tornar sua diversão mais segura....</p></div>
+    <div class="card"><h3>Acesso ao feed VIP</h3><p>Posts e perfis liberados para assinantes verificados.</p><p><b>Funções exclusivas — só quem é VIP tem</b></p><small>*prioridade no feed<br>*descontos exclusivos e mimos exclusivos em parceiros do AMORA³<br>*Acesso a Festas</small></div>
+  </div></div>
+</section>
+<section id="view-feed" class="view" style="display:none"><div class="wrap"><h2>Feed</h2>
+  <div class="feed3"><aside class="col"><b>Menu</b><a onclick="mostrar('inicio')">Início</a><a>Pesquisar</a><a>Notificações</a><a>Minhas fotos (15)</a><a>Amigos e seguidores (75)</a><a>Recomendações</a><a>Visitas recebidas (3 mil)</a><a>Meu perfil</a><button class="postar" onclick="document.getElementById('textoPost').focus()">Postar</button></aside>
+  <div class="col centro"><div class="card" style="margin:0 0 12px 0"><h3 style="margin:0 0 8px 0">Criar post</h3><textarea id="textoPost" rows="3" placeholder="Escreva seu post..."></textarea><div style="margin:8px 0"><label style="font-size:13px;color:#ccc">Foto do post</label><br><input id="fotoPost" type="file" accept="image/*" style="margin-top:6px"></div><img id="previewFoto" style="display:none;max-width:100%;border-radius:10px;margin:8px 0"><div style="display:flex;gap:8px;margin-top:8px"><button onclick="criarPost()">Publicar post</button><button class="ghost" onclick="verFeed()">Atualizar feed</button></div><small id="postMsg"></small></div><div id="posts" class="muted">Clique em Atualizar feed para ver os posts reais.</div></div>
+  <aside class="col"><b>INBOX</b><div class="chat"><div class="avatar sm">M</div><div><b>Maria</b><br><small>Boa noite • 4 min</small></div></div><small>Só assinante verificado conversa</small></aside></div></div></section>
+<section id="view-conta" class="view" style="display:none"><div class="wrap"><div class="card big"><h2 id="tituloConta">Criar conta — de verdade</h2><p class="muted">Perfil e gênero obrigatórios. 18+ obrigatório. Login fica salvo.</p><div id="logadoInfo" style="display:none;background:#1a2b1a;border:1px solid #2a5a2a;padding:10px;border-radius:10px;margin:10px 0"></div><div class="grid2"><div><label>E-mail</label><input id="email" value="teste@teste.com"></div><div><label>Senha</label><input id="senha" type="password" value="123456"></div><div><label>Perfil *</label><select id="perfil"><option value="">Escolha</option><option>Casal</option><option>Homem Solo</option><option>Mulher Solo</option><option>Trans</option><option>Travesti</option><option>Não-binário</option></select></div><div><label>Gênero *</label><select id="genero"><option value="">Escolha</option><option>Homem Cis</option><option>Mulher Cis</option><option>Homem Trans</option><option>Mulher Trans</option><option>Travesti</option><option>Não-binário</option></select></div><div><label>Data de nascimento</label><input id="nascimento" type="date" value="1990-01-01"></div><div><label>Bio</label><input id="bio" value="Homem Solo, busco diversão com transparência"></div></div><label class="check"><input id="fotoReal" type="checkbox" checked><span>Foto real (confirmo) — sem ícone, desenho, avatar</span></label><label class="check"><input id="doc" type="checkbox" checked><span>Documento OK</span></label><div class="botoes"><button onclick="cadastrar()">Criar conta</button><button class="ghost" onclick="fazerLogin()">Fazer login</button><button class="ghost" onclick="verFeed();mostrar('feed')">Ver Feed</button><button style="background:#fff;color:#000" onclick="ativar()">Ativar minha conta</button></div><pre id="saida">Pronto.</pre></div></div></section>
+</main><footer>AMORA³ — vive a liberdade.</footer><script src="app.js"></script></body></html>

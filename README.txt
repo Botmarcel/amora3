@@ -1,0 +1,1 @@
+1. Descompacta por cima de amora3/ substituir tudo. 2. Para backend Ctrl+C, npm start de novo (precisa do novo server.js com fogo+comentarios). 3. Abre frontend/index.html, Fazer login, Criar post com foto, Fogo, Comentar.

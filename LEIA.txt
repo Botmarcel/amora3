@@ -1,0 +1,4 @@
+Usa só logo-amora3-320.png (transparente). Apaga logo-amora3-480.webp e logo-amora3-transp.png da pasta frontend/ se existirem.
+1. Descompacta por cima de amora3/ Substituir tudo.
+2. Backend npm start
+3. Abre frontend/index.html - logo uma vez só no topo, sem quadrado branco.

@@ -1,0 +1,60 @@
+AMORA³ - decisões.txt
+Atualizado: 23/11/2026
+
+VISUAL
+- Fundo preto, branco, vermelho vinho #A6192E
+- Frase hero: vive a liberdade.
+- Logo original intacto, nunca gigante no header. Versão header 320px.
+- Favicon: quadrado branco, A preto + 3 vermelho.
+
+FUNCIONALIDADES (somente aqui, sem duplicar)
+- Diversidade com Transparência 🌈
+  Nós apoiamos, respeitamos e acolhemos toda opção. No AMORA³ todo mundo tem lugar.
+  Orgulho de ser você.
+  Respeito a Todos.
+  [letras pequenas] ⚠ Gêneros e opção sexual dissonante do cadastro serão bloqueados.
+- Chat privado ilimitado / Converse sem limite, com controle de quem pode te chamar. [pequeno] *opção disponível para assinantes
+- Bloqueio por distância (50km+) / Defina um raio e fique invisível para quem está perto demais. [pequeno] *mais privacidade, aquela sua vizinha bisbilhoteira não precisa saber...
+- Selo perfil de Verificado / Só conversa assinante que passou pela verificação de documento + foto real. [pequeno] *nada de perfil fake !
+- Fotos mais seguras.. / Componentes de segurança, Blur e camadas de proteção pra tornar sua diversão mais segura....
+- Acesso ao feed VIP / Posts e perfis liberados para assinantes verificados. / Funções exclusivas — só quem é VIP tem / *prioridade no feed / *descontos exclusivos e mimos exclusivos em parceiros do AMORA³ / *Acesso a Festas
+
+FEED (teste concorrente)
+- Desktop 3 colunas: esquerda menu, centro feed, direita INBOX
+- Mobile: feed central + barra inferior Início / Pesquisar / Postar / Chat / Perfil
+- Abas: Seguindo | Para você | Todos
+- Card: foto + nome + selo + Cidade/UF + agora + Gênero: X • Busca: Y + texto + foto + Comentar / Fogo
+
+CADASTRO
+- Perfil e gênero MANDATÓRIOS. Sem selecionar os 2, não avança.
+- Perfil (escolha única): Mulher Solo, Homem Solo, Casal, Trans, Travesti, Não-binário, Outro
+- Gênero (escolha única): Mulher Cis, Homem Cis, Mulher Trans, Homem Trans, Travesti, Não-binário, Outro
+- Busca / Orientação: MULTI-SELEÇÃO. Opção no topo: Não restringir busca por gêneros. Só aparece neste passo, nunca no Passo 1.
+- Data nascimento: calendário próprio dentro do app + digitação DD/MM/AAAA. 18+ obrigatório. Menor bloqueado.
+- Documento RG/CNH via OCR: lê só data. NÃO guarda foto do documento, só sim/não. Confronta documento x declarado.
+  - Cis divergente = bloqueio automático
+  - Trans/Travesti/NB divergente = vai pra revisão manual, não bloqueia auto. Fila até 24h.
+- Bio: obrigatória, deve dizer gênero, orientação e o que busca. Aviso de ban na bio e na edição de gênero.
+- Foto: FOTO REAL OBRIGATÓRIA. Sem ícone, desenho, avatar, imagem da internet. Sem foto + confirmação, Continuar travado. Pode borrar rosto, mas tem que ser foto real.
+- Perfil público mostra: Gênero: X • Busca: Y
+
+PAGAMENTO - NÃO DIVULGAR FORA
+- Nenhum valor público na landing. Sem seção Preços, sem R$, sem "grátis", sem "sem isenção" fora.
+- Mensalidade só aparece APÓS cadastro, dentro da conta, tela Ativar sua conta.
+- Regra interna: Mulher Solo Cis = R$ 0,00 único gratuito. Demais perfis = R$ 19,90/mês, sem isenção, incluindo LGBT. Sem card separado para LGBT.
+- Pagamento via Asaas: PIX + Cartão. Webhook libera/trava chat.
+- Sem pagar, vê feed mas não manda chat. Pagou = chat ilimitado.
+- Chat só para assinantes verificados. Sem telefone / WhatsApp. Sem passar telefone.
+
+PRIVACIDADE
+- Sem expor nome pessoal / CNPJ no site. Nome fantasia AMORA³.
+- Fotos com Blur + camadas. Sem vazar.
+- Bloqueio por distância 50km+.
+- Transparência primeiro: não finja ser o que não é.
+
+TECNICO
+- Pasta única amora3/ com frontend/, backend/, decisoes.txt
+- Meta AI é a IA decisora única. Outras IAs locais só copiam/ colam.
+- Um passo por vez, ~10 min.
+- Hospedagem: KingHost VPS + EasyPanel + GitHub Botmarcel/amora3 + Bunny.net Storage amora3. Live amora3.com.br. Não derrubar live.
+- Dev local: /home/marcel/Área de trabalho/amora3/ PORT 4000, Open WebUI 3000, Linux Mint, VS Code + Antigravity + Git.
