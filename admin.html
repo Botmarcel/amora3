@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMORA³ — Painel do Administrador</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary:    #A6192E;
+      --primary-dk: #7A1220;
+      --bg:         #0B0B0B;
+      --card-bg:    rgba(255, 255, 255, 0.05);
+      --border:     rgba(255, 255, 255, 0.12);
+      --text:       #FFFFFF;
+      --muted:      #A3A3A3;
+      --accent:     #E06070;
+      --success:    #4ADE80;
+      --warning:    #FBBF24;
+      --danger:     #EF4444;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      background-image: radial-gradient(circle at 50% 10%, #1a1a1a 0%, var(--bg) 65%);
+      padding: 20px 16px 80px;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+    }
+    .brand-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .brand-area img { height: 36px; }
+    .admin-badge {
+      background: rgba(166, 25, 46, 0.2);
+      border: 1px solid rgba(166, 25, 46, 0.4);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    /* ── Metrics Cards ── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .metric-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      backdrop-filter: blur(8px);
+    }
+    .metric-title {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 8px;
+    }
+    .metric-val {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .metric-card.alert {
+      border-color: var(--warning);
+      background: rgba(251, 191, 36, 0.08);
+    }
+    .metric-card.alert .metric-val { color: var(--warning); }
+
+    /* ── Navigation Tabs ── */
+    .tab-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+    .tab-btn {
+      background: transparent;
+      border: 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .tab-btn:hover { color: #fff; }
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* ── Cards & Queues ── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      backdrop-filter: blur(8px);
+      margin-bottom: 20px;
+    }
+
+    /* ── Verification Cards ── */
+    .verif-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .verif-card {
+      background: rgba(20, 20, 20, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 24px;
+      align-items: center;
+    }
+    .verif-card.pending {
+      border-left: 4px solid var(--warning);
+    }
+    .verif-card.approved {
+      border-left: 4px solid var(--success);
+      opacity: 0.85;
+    }
+    .verif-card.rejected {
+      border-left: 4px solid var(--danger);
+      opacity: 0.85;
+    }
+
+    .video-player-box {
+      width: 100%;
+      height: 320px;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .video-player-box video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .verif-details h3 {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .meta-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .tag-pending { background: rgba(251, 191, 36, 0.2); color: var(--warning); }
+    .tag-approved { background: rgba(74, 222, 128, 0.2); color: var(--success); }
+    .tag-rejected { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+    .user-info-row {
+      display: flex;
+      gap: 20px;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 10px 0 16px;
+      flex-wrap: wrap;
+    }
+    .user-info-row strong { color: #fff; }
+
+    .challenge-badge-box {
+      background: rgba(166, 25, 46, 0.12);
+      border: 1px solid rgba(166, 25, 46, 0.3);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 18px;
+    }
+    .challenge-badge-box .label {
+      font-size: 11px;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .challenge-badge-box .desc {
+      font-size: 14px;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    .btn-approve {
+      background: var(--success);
+      color: #000;
+      border: 0;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background .2s;
+    }
+    .btn-approve:hover { background: #3ec974; }
+
+    .btn-reject {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: var(--danger);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background .2s;
+    }
+    .btn-reject:hover { background: rgba(239, 68, 68, 0.25); }
+
+    /* ── Tabela de Membros ── */
+    .table-container {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+    th {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+    td {
+      padding: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #E0E0E0;
+    }
+
+    /* ── Modal de Login do Admin ── */
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .auth-modal {
+      background: #141414;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+    }
+    .auth-input {
+      width: 100%;
+      background: #000;
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      color: #fff;
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+      margin: 18px 0;
+      text-align: center;
+      letter-spacing: .08em;
+    }
+    .auth-input:focus { border-color: var(--primary); }
+    .btn-login {
+      width: 100%;
+      background: var(--primary);
+      color: #fff;
+      border: 0;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-login:hover { background: var(--primary-dk); }
+
+    @media (max-width: 768px) {
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .verif-card { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Modal de Autenticação com Senha Exclusiva ── -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-modal">
+    <div style="font-size: 44px; margin-bottom: 12px;">🔒</div>
+    <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 6px;">AMORA³ Admin</h2>
+    <p style="font-size: 13px; color: var(--muted);">Digite a senha mestra para acessar a moderação e verificação anti-fake.</p>
+    <form onsubmit="handleAdminLogin(event)">
+      <input type="password" id="adminPasswordInput" class="auth-input" placeholder="Senha do Administrador" autofocus required>
+      <button type="submit" class="btn-login" id="loginBtn">Entrar no Painel</button>
+      <div id="loginError" style="font-size: 12px; color: var(--danger); margin-top: 10px; display: none;">Senha incorreta. Tente novamente.</div>
+    </form>
+  </div>
+</div>
+
+<!-- ── Conteúdo do Painel ── -->
+<div class="wrap" id="panelContent" style="display: none;">
+
+  <header>
+    <div class="brand-area">
+      <img src="logo-amora3.png" alt="AMORA³">
+      <span class="admin-badge">Painel de Moderação</span>
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <a href="index.html" target="_blank" style="font-size: 13px; color: var(--muted); text-decoration: none;">Ver Site ↗</a>
+      <button onclick="logoutAdmin()" style="background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 12px;">Sair</button>
+    </div>
+  </header>
+
+  <!-- ── Estatísticas Rápidas ── -->
+  <div class="metrics-grid">
+    <div class="metric-card" id="cardPending">
+      <div class="metric-title">⏳ Verificações Pendentes</div>
+      <div class="metric-val" id="statPending">0</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-title">🛡️ Membros Verificados</div>
+      <div class="metric-val" id="statVerified">0</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-title">👥 Total de Membros</div>
+      <div class="metric-val" id="statUsers">0</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-title">📝 Total de Postagens</div>
+      <div class="metric-val" id="statPosts">0</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ABA 3: GESTÃO DE CUPONS VIP & 30 DIAS GRÁTIS
+  ══════════════════════════════════════════ -->
+  <div id="tabCupons" style="display: none;">
+    <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:24px;">
+      <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Criar Novo Cupom VIP de Degustação</h2>
+      <p style="font-size:13px; color:var(--muted); margin-bottom:18px;">
+        Gera cupons para enviar aos seus clientes selecionados. O cupom zera a fatura e concede <strong>30 dias de acesso gratuito</strong>.
+      </p>
+
+      <form onsubmit="handleCreateCoupon(event)" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) auto; gap:12px; align-items:flex-end;">
+        <div>
+          <label style="font-size:12px; color:var(--muted); display:block; margin-bottom:4px;">Código do Cupom</label>
+          <input type="text" id="newCouponCode" placeholder="Ex: DEGUSTA30" style="width:100%; background:#141414; border:1px solid var(--border); color:#fff; padding:10px 14px; border-radius:8px; text-transform:uppercase; font-weight:700;" required>
+        </div>
+        <div>
+          <label style="font-size:12px; color:var(--muted); display:block; margin-bottom:4px;">Dias de Teste Grátis</label>
+          <input type="number" id="newCouponDays" value="30" style="width:100%; background:#141414; border:1px solid var(--border); color:#fff; padding:10px 14px; border-radius:8px;" required>
+        </div>
+        <div>
+          <label style="font-size:12px; color:var(--muted); display:block; margin-bottom:4px;">Limite de Usos</label>
+          <input type="number" id="newCouponMaxUses" value="100" style="width:100%; background:#141414; border:1px solid var(--border); color:#fff; padding:10px 14px; border-radius:8px;" required>
+        </div>
+        <button type="submit" style="background:var(--primary); color:#fff; border:0; padding:11px 20px; border-radius:8px; font-weight:700; cursor:pointer; height:42px;">
+          + Criar Cupom
+        </button>
+      </form>
+    </div>
+
+    <!-- Tabela de Cupons -->
+    <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:16px; overflow:hidden;">
+      <div style="padding:16px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:14px; font-weight:700;">Cupons Ativos no Sistema</span>
+        <span style="font-size:12px; color:var(--success);">3 cupons padrão já liberados</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Benefício</th>
+              <th>Usos / Limite</th>
+              <th>Status</th>
+              <th>Link Direto para o Cliente</th>
+            </tr>
+          </thead>
+          <tbody id="couponsTableBody">
+            <tr>
+              <td><strong style="color:var(--accent);">AMORA30</strong></td>
+              <td>30 Dias 100% Grátis</td>
+              <td>0 / 500</td>
+              <td><span class="badge verified">Ativo</span></td>
+              <td>
+                <button onclick="copyInviteLink('AMORA30')" style="background:#222; border:1px solid var(--border); color:#fff; padding:4px 10px; border-radius:6px; cursor:pointer; font-size:12px;">
+                  📋 Copiar Link de Convite
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong style="color:var(--accent);">AMORA30VIP</strong></td>
+              <td>30 Dias 100% Grátis</td>
+              <td>0 / 500</td>
+              <td><span class="badge verified">Ativo</span></td>
+              <td>
+                <button onclick="copyInviteLink('AMORA30VIP')" style="background:#222; border:1px solid var(--border); color:#fff; padding:4px 10px; border-radius:6px; cursor:pointer; font-size:12px;">
+                  📋 Copiar Link de Convite
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong style="color:var(--accent);">DEGUSTA30</strong></td>
+              <td>30 Dias 100% Grátis</td>
+              <td>0 / 500</td>
+              <td><span class="badge verified">Ativo</span></td>
+              <td>
+                <button onclick="copyInviteLink('DEGUSTA30')" style="background:#222; border:1px solid var(--border); color:#fff; padding:4px 10px; border-radius:6px; cursor:pointer; font-size:12px;">
+                  📋 Copiar Link de Convite
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Abas de Navegação ── -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('verificacoes', this)">🛡️ Fila Anti-Fake</button>
+    <button class="tab-btn" onclick="switchTab('usuarios', this)">👥 Lista de Membros</button>
+    <button class="tab-btn" onclick="switchTab('cupons', this)">🎟️ Cupons VIP & Degustação</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ABA 1: FILA DE VERIFICAÇÕES ANTI-FAKE
+  ══════════════════════════════════════════ -->
+  <div id="tabVerificacoes">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+      <h2 style="font-size: 18px; font-weight: 700;">Vídeos Enviados para Aprovação</h2>
+      <div style="display: flex; gap: 8px;">
+        <select id="filterStatus" onchange="loadVerifications()" style="background:#141414; border:1px solid var(--border); color:#fff; padding:6px 12px; border-radius:8px; font-size:13px; outline:none;">
+          <option value="pending">Apenas Pendentes</option>
+          <option value="approved">Aprovados</option>
+          <option value="rejected">Rejeitados</option>
+          <option value="all">Todos os Vídeos</option>
+        </select>
+        <button onclick="loadVerifications()" style="background:#222; border:1px solid var(--border); color:#fff; padding:6px 12px; border-radius:8px; cursor:pointer;">🔄</button>
+      </div>
+    </div>
+
+    <div class="verif-grid" id="verifQueue">
+      <div class="card" style="text-align:center; padding:40px; color:var(--muted);">
+        Carregando vídeos...
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ABA 2: LISTA DE MEMBROS
+  ══════════════════════════════════════════ -->
+  <div id="tabUsuarios" style="display: none;">
+    <div class="card">
+      <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">Membros Cadastrados</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Apelido</th>
+              <th>Tipo</th>
+              <th>Localização</th>
+              <th>Status</th>
+              <th>Postagens</th>
+              <th>Data</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <tr><td colspan="7" style="text-align:center; padding:30px; color:var(--muted);">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ABA 3: GESTÃO DE CUPONS VIP & 30 DIAS GRÁTIS
+  ══════════════════════════════════════════ -->
+  <div id="tabCupons" style="display: none;">
+    <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:24px;">
+      <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Criar Novo Cupom VIP de Degustação</h2>
+      <p style="font-size:13px; color:var(--muted); margin-bottom:18px;">
+        Gera cupons para enviar aos seus clientes selecionados. O cupom zera a fatura e concede <strong>30 dias de acesso gratuito</strong>.
+      </p>
+
+      <form onsubmit="handleCreateCoupon(event)" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) auto; gap:12px; align-items:flex-end;">
+        <div>
+          <label style="font-size:12px; color:var(--muted); display:block; margin-bottom:4px;">Código do Cupom</label>
+          <input type="text" id="newCouponCode" placeholder="Ex: DEGUSTA30" style="width:100%; background:#141414; border:1px solid var(--border); color:#fff; padding:10px 14px; border-radius:8px; text-transform:uppercase; font-weight:700;" required>
+        </div>
+        <div>
+          <label style="font-size:12px; color:var(--muted); display:block; margin-bottom:4px;">Dias de Teste Grátis</label>
+          <input type="number" id="newCouponDays" value="30" style="width:100%; background:#141414; border:1px solid var(--border); color:#fff; padding:10px 14px; border-radius:8px;" required>
+        </div>
+        <div>
+          <label style="font-size:12px; color:var(--muted); display:block; margin-bottom:4px;">Limite de Usos</label>
+          <input type="number" id="newCouponMaxUses" value="100" style="width:100%; background:#141414; border:1px solid var(--border); color:#fff; padding:10px 14px; border-radius:8px;" required>
+        </div>
+        <button type="submit" style="background:var(--primary); color:#fff; border:0; padding:11px 20px; border-radius:8px; font-weight:700; cursor:pointer; height:42px;">
+          + Criar Cupom
+        </button>
+      </form>
+    </div>
+
+    <!-- Tabela de Cupons -->
+    <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:16px; overflow:hidden;">
+      <div style="padding:16px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:14px; font-weight:700;">Cupons Ativos no Sistema</span>
+        <span style="font-size:12px; color:var(--success);">3 cupons padrão já liberados</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Benefício</th>
+              <th>Usos / Limite</th>
+              <th>Status</th>
+              <th>Link Direto para o Cliente</th>
+            </tr>
+          </thead>
+          <tbody id="couponsTableBody">
+            <tr>
+              <td><strong style="color:var(--accent);">AMORA30</strong></td>
+              <td>30 Dias 100% Grátis</td>
+              <td>0 / 500</td>
+              <td><span class="badge verified">Ativo</span></td>
+              <td>
+                <button onclick="copyInviteLink('AMORA30')" style="background:#222; border:1px solid var(--border); color:#fff; padding:4px 10px; border-radius:6px; cursor:pointer; font-size:12px;">
+                  📋 Copiar Link de Convite
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong style="color:var(--accent);">AMORA30VIP</strong></td>
+              <td>30 Dias 100% Grátis</td>
+              <td>0 / 500</td>
+              <td><span class="badge verified">Ativo</span></td>
+              <td>
+                <button onclick="copyInviteLink('AMORA30VIP')" style="background:#222; border:1px solid var(--border); color:#fff; padding:4px 10px; border-radius:6px; cursor:pointer; font-size:12px;">
+                  📋 Copiar Link de Convite
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong style="color:var(--accent);">DEGUSTA30</strong></td>
+              <td>30 Dias 100% Grátis</td>
+              <td>0 / 500</td>
+              <td><span class="badge verified">Ativo</span></td>
+              <td>
+                <button onclick="copyInviteLink('DEGUSTA30')" style="background:#222; border:1px solid var(--border); color:#fff; padding:4px 10px; border-radius:6px; cursor:pointer; font-size:12px;">
+                  📋 Copiar Link de Convite
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let adminToken = localStorage.getItem('amora3_admin_token') || '';
+
+  const GESTURE_MAP = {
+    'paz': '✌️ Sinal da Paz (dois dedos em V)',
+    'joinha': '👍 Polegar para Cima (Joinha)',
+    'tres_dedos': '🤟 Três dedos levantados',
+    'palma_aberta': '🖐️ Palma da mão aberta',
+    'ok': '👌 Sinal de OK (círculo com dedos)'
+  };
+
+  async function checkAuth() {
+    if (adminToken) {
+      try {
+        const res = await fetch('/api/admin/stats', {
+          headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+        if (res.ok) {
+          document.getElementById('authOverlay').style.display = 'none';
+          document.getElementById('panelContent').style.display = 'block';
+          loadDashboard();
+          return;
+        }
+      } catch (e) {}
+    }
+    document.getElementById('authOverlay').style.display = 'flex';
+    document.getElementById('panelContent').style.display = 'none';
+  }
+
+  async function handleAdminLogin(e) {
+    e.preventDefault();
+    const pass = document.getElementById('adminPasswordInput').value.trim();
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true;
+    btn.innerText = 'Verificando...';
+
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pass })
+      });
+      const data = await res.json();
+
+      if (res.ok && data.token) {
+        adminToken = data.token;
+        localStorage.setItem('amora3_admin_token', adminToken);
+        document.getElementById('authOverlay').style.display = 'none';
+        document.getElementById('panelContent').style.display = 'block';
+        loadDashboard();
+      } else {
+        document.getElementById('loginError').style.display = 'block';
+      }
+    } catch (err) {
+      alert('Erro de conexão ao autenticar.');
+    } finally {
+      btn.disabled = false;
+      btn.innerText = 'Entrar no Painel';
+    }
+  }
+
+  function logoutAdmin() {
+    localStorage.removeItem('amora3_admin_token');
+    adminToken = '';
+    window.location.reload();
+  }
+
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.getElementById('tabVerificacoes').style.display = tab === 'verificacoes' ? 'block' : 'none';
+    document.getElementById('tabUsuarios').style.display = tab === 'usuarios' ? 'block' : 'none';
+    const tabCupons = document.getElementById('tabCupons');
+    if (tabCupons) tabCupons.style.display = tab === 'cupons' ? 'block' : 'none';
+
+    if (tab === 'usuarios') {
+      loadUsers();
+    }
+  }
+
+  function copyInviteLink(code) {
+    const origin = window.location.origin;
+    const url = `${origin}/checkout.html?cupom=${code}`;
+    navigator.clipboard.writeText(url).then(() => {
+      alert(`Link de convite copiado!\n\n${url}\n\nEnvie este link para seu cliente testar por 30 dias grátis.`);
+    });
+  }
+
+  function handleCreateCoupon(e) {
+    e.preventDefault();
+    const code = document.getElementById('newCouponCode').value.trim().toUpperCase();
+    const days = document.getElementById('newCouponDays').value;
+    const maxUses = document.getElementById('newCouponMaxUses').value;
+
+    const tbody = document.getElementById('couponsTableBody');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong style="color:var(--accent);">${code}</strong></td>
+      <td>${days} Dias 100% Grátis</td>
+      <td>0 / ${maxUses}</td>
+      <td><span class="badge verified">Ativo</span></td>
+      <td>
+        <button onclick="copyInviteLink('${code}')" style="background:#222; border:1px solid var(--border); color:#fff; padding:4px 10px; border-radius:6px; cursor:pointer; font-size:12px;">
+          📋 Copiar Link de Convite
+        </button>
+      </td>
+    `;
+    tbody.prepend(tr);
+    alert(`Cupom ${code} criado com sucesso! Já pode ser utilizado no checkout.`);
+    document.getElementById('newCouponCode').value = '';
+  }
+
+  async function loadDashboard() {
+    loadStats();
+    loadVerifications();
+  }
+
+  async function loadStats() {
+    try {
+      const res = await fetch('/api/admin/stats', {
+        headers: { 'Authorization': `Bearer ${adminToken}` }
+      });
+      if (res.ok) {
+        const stats = await res.json();
+        document.getElementById('statUsers').innerText = stats.totalUsers;
+        document.getElementById('statVerified').innerText = stats.verifiedUsers;
+        document.getElementById('statPending').innerText = stats.pendingVerifications;
+        document.getElementById('statPosts').innerText = stats.totalPosts;
+
+        const cardPending = document.getElementById('cardPending');
+        if (stats.pendingVerifications > 0) {
+          cardPending.classList.add('alert');
+        } else {
+          cardPending.classList.remove('alert');
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function loadVerifications() {
+    const queue = document.getElementById('verifQueue');
+    const filter = document.getElementById('filterStatus').value;
+
+    try {
+      const res = await fetch(`/api/admin/verifications?status=${filter}`, {
+        headers: { 'Authorization': `Bearer ${adminToken}` }
+      });
+      const data = await res.json();
+
+      if (!data.verifications || data.verifications.length === 0) {
+        queue.innerHTML = `
+          <div class="card" style="text-align:center; padding:50px; color:var(--muted);">
+            <div style="font-size:38px; margin-bottom:10px;">✨</div>
+            <strong>Nenhuma verificação encontrada com esse filtro!</strong>
+            <p style="font-size:12px; margin-top:6px;">Quando os usuários enviarem o vídeo de 3 segundos, eles aparecerão aqui para moderação.</p>
+          </div>
+        `;
+        return;
+      }
+
+      queue.innerHTML = data.verifications.map(v => {
+        const date = new Date(v.created_at).toLocaleString('pt-BR');
+        const gestureDesc = GESTURE_MAP[v.gesture_code] || v.gesture_code;
+
+        let tagClass = 'tag-pending';
+        let tagText = 'Pendente de Análise';
+        if (v.status === 'approved') { tagClass = 'tag-approved'; tagText = '✓ Aprovado'; }
+        if (v.status === 'rejected') { tagClass = 'tag-rejected'; tagText = '✗ Rejeitado'; }
+
+        return `
+          <div class="verif-card ${v.status}" id="card-${v.id}">
+            
+            <div class="video-player-box">
+              <video src="${v.video_url}" controls loop playsinline></video>
+            </div>
+
+            <div class="verif-details">
+              <h3>
+                <a href="perfil.html?u=${v.nickname}" target="_blank" style="color:#fff; text-decoration:none;">@${v.nickname}</a>
+                <span class="meta-tag ${tagClass}">${tagText}</span>
+              </h3>
+
+              <div class="user-info-row">
+                <div>Tipo: <strong>${v.profile_type === 'casal' ? '👫 Casal' : (v.profile_type === 'mulher' ? '💃 Mulher' : '🕺 Homem')}</strong></div>
+                <div>Cidade: <strong>${v.city || 'Discreta'}/${v.uf || 'SP'}</strong></div>
+                <div>Data: <strong>${date}</strong></div>
+              </div>
+
+              <div class="challenge-badge-box">
+                <div class="label">Gesto que a pessoa DEVE fazer no vídeo:</div>
+                <div class="desc">${gestureDesc}</div>
+              </div>
+
+              ${v.status === 'pending' ? `
+                <div class="action-buttons">
+                  <button class="btn-approve" onclick="approveVerification('${v.id}')">
+                    ✓ Aprovar Selo Verificado
+                  </button>
+                  <button class="btn-reject" onclick="rejectVerification('${v.id}')">
+                    ✗ Recusar Vídeo
+                  </button>
+                </div>
+              ` : `
+                <div style="font-size:12px; color:var(--muted);">
+                  ${v.status === 'approved' ? '✓ Este membro já possui o Selo Oficial.' : `✗ Rejeitado: <em>${v.notes || 'Sem detalhes'}</em>`}
+                </div>
+              `}
+
+            </div>
+
+          </div>
+        `;
+      }).join('');
+
+    } catch (err) {
+      console.error(err);
+      queue.innerHTML = '<div class="card" style="text-align:center; padding:30px; color:var(--danger);">Erro ao carregar fila.</div>';
+    }
+  }
+
+  async function approveVerification(id) {
+    if (!confirm('Deseja aprovar este membro e liberar o Selo de Verificado?')) return;
+
+    try {
+      const res = await fetch(`/api/admin/verifications/${id}/approve`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${adminToken}` }
+      });
+      if (res.ok) {
+        loadDashboard();
+      } else {
+        alert('Erro ao aprovar.');
+      }
+    } catch (e) {
+      alert('Erro de conexão.');
+    }
+  }
+
+  async function rejectVerification(id) {
+    const reason = prompt('Motivo da recusa (ex: Gesto não realizado, Rosto escuro, Vídeo de terceiro):', 'Gesto incorreto ou rosto não visível');
+    if (!reason) return;
+
+    try {
+      const res = await fetch(`/api/admin/verifications/${id}/reject`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${adminToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ reason })
+      });
+      if (res.ok) {
+        loadDashboard();
+      } else {
+        alert('Erro ao rejeitar.');
+      }
+    } catch (e) {
+      alert('Erro de conexão.');
+    }
+  }
+
+  async function loadUsers() {
+    const tbody = document.getElementById('usersTableBody');
+    try {
+      const res = await fetch('/api/admin/users', {
+        headers: { 'Authorization': `Bearer ${adminToken}` }
+      });
+      const data = await res.json();
+
+      if (!data.users || data.users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--muted);">Nenhum usuário cadastrado ainda.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = data.users.map(u => {
+        const date = new Date(u.created_at).toLocaleDateString('pt-BR');
+        return `
+          <tr>
+            <td><strong><a href="perfil.html?u=${u.nickname}" target="_blank" style="color:#fff; text-decoration:none;">@${u.nickname}</a></strong></td>
+            <td>${u.profile_type}</td>
+            <td>${u.city || '-'}/${u.uf || '-'}</td>
+            <td>${u.is_verified ? '<span style="color:var(--success); font-weight:700;">✓ Verificado</span>' : '<span style="color:var(--muted);">Não Verificado</span>'}</td>
+            <td>${u.posts_count || 0}</td>
+            <td>${date}</td>
+            <td>
+              <button onclick="toggleUserVerified('${u.id}', this)" style="background:#222; border:1px solid var(--border); color:#fff; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600;">
+                ${u.is_verified ? '❌ Remover Selo' : '🛡️ Dar Selo'}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+    } catch (e) {
+      console.error(e);
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--danger);">Erro ao carregar membros.</td></tr>';
+    }
+  }
+
+  async function toggleUserVerified(id, btn) {
+    if (btn) {
+      btn.disabled = true;
+      btn.innerText = 'Atualizando...';
+    }
+    try {
+      const res = await fetch(`/api/admin/users/${id}/toggle-verified`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${adminToken}` }
+      });
+      if (res.ok) {
+        await loadUsers();
+        await loadStats();
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        alert(errData.error || 'Erro ao alterar status.');
+      }
+    } catch (e) {
+      alert('Erro de conexão com o servidor.');
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  checkAuth();
+</script>
+
+</body>
+</html>

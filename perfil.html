@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMORA³ — Perfil do Membro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary:    #A6192E;
+      --primary-dk: #7A1220;
+      --bg:         #0B0B0B;
+      --card-bg:    rgba(255, 255, 255, 0.05);
+      --border:     rgba(255, 255, 255, 0.12);
+      --text:       #FFFFFF;
+      --muted:      #A3A3A3;
+      --accent:     #E06070;
+      --success:    #4ADE80;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      background-image: radial-gradient(circle at 50% 15%, #181818 0%, var(--bg) 70%);
+      padding: 20px 16px 80px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      pointer-events: none;
+      opacity: .45;
+      background-image:
+        radial-gradient(circle, #000 4px, transparent 5px),
+        radial-gradient(circle, #000 4px, transparent 5px);
+      background-size: 22px 26px;
+      background-position: 0 0, 11px 13px;
+      z-index: 0;
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    header img { height: 38px; }
+    .nav-links { display: flex; gap: 20px; font-size: 14px; }
+    .nav-links a { color: var(--muted); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: #fff; }
+
+    /* ── Layout em 2 Colunas (Sidebar + Feed) ── */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 24px;
+    }
+
+    /* ── Card do Perfil ── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+    }
+
+    .avatar-box {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: #1c1c1c;
+      border: 2px solid var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin-bottom: 14px;
+      box-shadow: 0 0 20px rgba(166, 25, 46, 0.4);
+    }
+    .profile-nick {
+      font-size: 22px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .badge-founder {
+      background: rgba(166, 25, 46, 0.2);
+      border: 1px solid rgba(166, 25, 46, 0.5);
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .badge-verified {
+      background: rgba(74, 222, 128, 0.15);
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      color: var(--success);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+    .profile-status {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 8px 0 16px;
+      font-style: italic;
+    }
+    .info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+      margin-top: 16px;
+    }
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+    }
+    .info-item strong { color: #fff; }
+    .bio-text {
+      font-size: 13px;
+      color: #D1D1D1;
+      line-height: 1.6;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      white-space: pre-line;
+    }
+
+    /* ── Nova Postagem (Mural) ── */
+    .new-post-card {
+      margin-bottom: 20px;
+    }
+    .post-input {
+      width: 100%;
+      background: rgba(15, 15, 15, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      resize: vertical;
+      min-height: 80px;
+      margin-bottom: 12px;
+    }
+    .post-input:focus { border-color: var(--accent); }
+    .post-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-publish {
+      background: var(--primary);
+      color: #fff;
+      border: 0;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .18s;
+      height: 38px;
+    }
+    .btn-publish:hover { background: var(--primary-dk); }
+
+    /* ── Postagem Feed ── */
+    .post-card {
+      margin-bottom: 16px;
+      border-left: 3px solid var(--primary);
+    }
+    .post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .post-author {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .post-date {
+      font-size: 12px;
+      color: #666;
+    }
+    .post-content {
+      font-size: 14px;
+      color: #E0E0E0;
+      line-height: 1.6;
+      white-space: pre-line;
+      margin-bottom: 14px;
+    }
+    .post-footer {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 10px;
+    }
+    .like-btn {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--muted);
+      transition: color .2s;
+    }
+    .like-btn:hover { color: var(--accent); }
+
+    @media (max-width: 768px) {
+      .profile-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <a href="index.html">
+      <img src="logo-amora3.png" alt="AMORA³">
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Início</a>
+      <a href="feed.html" style="color:var(--accent); font-weight:600;">Feed</a>
+      <a href="cadastro.html">Cadastro</a>
+    </div>
+  </header>
+
+  <div class="profile-grid">
+    
+    <!-- ── Coluna Esquerda: Informações do Perfil ── -->
+    <div>
+      <div class="card" id="profileCard">
+        <div class="avatar-box" id="avatarBox">👫</div>
+        <div class="profile-nick">
+          <span id="profNick">@carregando...</span>
+          <span class="badge-founder">Fundador</span>
+          <span id="badgeVerified" class="badge-verified">Verificado</span>
+        </div>
+        <div class="profile-status" id="profStatus">...</div>
+
+        <div class="info-list">
+          <div class="info-item">
+            <span>Tipo de Perfil:</span>
+            <strong id="profType">Casal Liberal</strong>
+          </div>
+          <div class="info-item">
+            <span>Localização:</span>
+            <strong id="profLocation">Campinas/SP</strong>
+          </div>
+          <div class="info-item">
+            <span>Busca:</span>
+            <strong id="profSeeking">Casais, Mulheres</strong>
+          </div>
+        </div>
+
+        <div class="bio-text" id="profBio">...</div>
+      </div>
+    </div>
+
+    <!-- ── Coluna Direita: Mural de Postagens ── -->
+    <div>
+      
+      <!-- Caixa Nova Postagem -->
+      <div class="card new-post-card">
+        <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 10px;">Publicar no seu mural</h3>
+        <textarea id="newPostContent" class="post-input" placeholder="Compartilhe um pensamento, convite ou momento..."></textarea>
+        
+        <!-- Preview da Foto selecionada -->
+        <div id="photoPreviewBox" style="display:none; position:relative; margin-bottom:12px; max-width:180px;">
+          <img id="photoPreviewImg" src="" style="width:100%; border-radius:10px; border:1px solid var(--border);" alt="Preview">
+          <button type="button" onclick="clearSelectedPhoto()" style="position:absolute; top:4px; right:4px; background:rgba(0,0,0,0.7); color:#fff; border:0; border-radius:50%; width:24px; height:24px; cursor:pointer; font-weight:bold;">×</button>
+        </div>
+
+        <div class="post-actions" style="flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <label class="btn-ghost" style="height:36px; padding:0 14px; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+              <input type="file" id="postPhotoInput" accept="image/*" style="display:none;" onchange="previewPhoto(this)">
+              📸 Adicionar Foto
+            </label>
+            <label style="font-size:12px; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+              <input type="checkbox" id="postBlurInput"> 🙈 Blur de discrição
+            </label>
+          </div>
+          <button class="btn-publish" id="publishBtn" onclick="publishPost()">Publicar</button>
+        </div>
+      </div>
+
+      <!-- Feed de Postagens -->
+      <div id="postsFeed">
+        <div style="text-align: center; padding: 40px; color: var(--muted); font-size: 14px;">
+          Carregando postagens...
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetNick = urlParams.get('u') || 'casal_liberdade';
+  let currentUserId = null;
+  let selectedPhotoFile = null;
+
+  function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+      selectedPhotoFile = input.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('photoPreviewImg').src = e.target.result;
+        document.getElementById('photoPreviewBox').style.display = 'block';
+      };
+      reader.readAsDataURL(selectedPhotoFile);
+    }
+  }
+
+  function clearSelectedPhoto() {
+    selectedPhotoFile = null;
+    document.getElementById('postPhotoInput').value = '';
+    document.getElementById('photoPreviewBox').style.display = 'none';
+  }
+
+  async function loadProfile() {
+    try {
+      const res = await fetch(`/api/profile/${targetNick}`);
+      if (!res.ok) {
+        document.getElementById('profNick').innerText = '@não_encontrado';
+        document.getElementById('postsFeed').innerHTML = '<div class="card" style="text-align:center;padding:30px;">Perfil não encontrado. <a href="cadastro.html" style="color:var(--accent);">Crie seu cadastro agora</a>.</div>';
+        return;
+      }
+
+      const data = await res.json();
+      const p = data.profile;
+      currentUserId = p.id;
+
+      document.getElementById('profNick').innerText = '@' + p.nickname;
+      document.getElementById('profStatus').innerText = p.status_phrase || 'Membro AMORA³';
+      document.getElementById('profLocation').innerText = `${p.city}/${p.uf}`;
+
+      // Status do Selo Verificado
+      const badge = document.getElementById('badgeVerified');
+      if (p.is_verified) {
+        badge.className = 'badge-verified';
+        badge.innerHTML = '✓ Verificado';
+      } else {
+        badge.className = 'badge-founder';
+        badge.innerHTML = `<a href="verificacao.html?u=${p.nickname}" style="color:var(--accent); text-decoration:none;">🛡️ Não Verificado (Clique para Verificar)</a>`;
+      }
+
+      if (p.profile_type === 'mulher') {
+        document.getElementById('avatarBox').innerText = '💃';
+        document.getElementById('profType').innerText = 'Mulher Solo';
+      } else if (p.profile_type === 'homem') {
+        document.getElementById('avatarBox').innerText = '🕺';
+        document.getElementById('profType').innerText = 'Homem Solo';
+      } else {
+        document.getElementById('avatarBox').innerText = '👫';
+        document.getElementById('profType').innerText = 'Casal Liberal';
+      }
+
+      const seeking = [];
+      if (p.seeking_casais) seeking.push('Casais');
+      if (p.seeking_mulheres) seeking.push('Mulheres');
+      if (p.seeking_homens) seeking.push('Homens');
+      document.getElementById('profSeeking').innerText = seeking.join(', ') || 'Discreto';
+
+      document.getElementById('profBio').innerText = p.bio || 'Sem descrição no momento.';
+
+      renderPosts(data.posts, p.nickname);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function renderPosts(posts, nickname) {
+    const feed = document.getElementById('postsFeed');
+    if (!posts || posts.length === 0) {
+      feed.innerHTML = '<div class="card" style="text-align:center;padding:30px;color:var(--muted);font-size:13px;">Nenhuma postagem ainda. Escreva a primeira acima!</div>';
+      return;
+    }
+
+    feed.innerHTML = posts.map(post => {
+      const date = new Date(post.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+      const mediaHtml = post.media_url ? `
+        <div style="position:relative; margin-top:10px; margin-bottom:12px; border-radius:12px; overflow:hidden; border:1px solid var(--border);">
+          <img src="${post.media_url}" 
+               style="width:100%; max-height:420px; object-fit:cover; display:block; ${post.is_blurred ? 'filter:blur(18px); cursor:pointer;' : ''}" 
+               onclick="if(this.style.filter){this.style.filter='none'}else{this.style.filter='blur(18px)'}"
+               alt="Foto privada">
+          <div style="position:absolute; bottom:6px; right:8px; font-size:11px; background:rgba(0,0,0,0.65); color:rgba(255,255,255,0.85); padding:2px 8px; border-radius:999px; pointer-events:none;">
+            🔒 Bunny CDN • AMORA³
+          </div>
+        </div>
+      ` : '';
+
+      return `
+        <div class="card post-card">
+          <div class="post-header">
+            <span class="post-author">@${nickname}</span>
+            <span class="post-date">${date}</span>
+          </div>
+          ${post.content ? `<div class="post-content">${escapeHtml(post.content)}</div>` : ''}
+          ${mediaHtml}
+          <div class="post-footer">
+            <span class="like-btn" onclick="likePost(this)">❤️ <span>${post.likes_count || 0}</span></span>
+            <span>💬 ${post.comments_count || 0} comentários</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function publishPost() {
+    const content = document.getElementById('newPostContent').value.trim();
+    if (!content && !selectedPhotoFile) {
+      alert('Escreva uma mensagem ou selecione uma foto.');
+      return;
+    }
+    if (!currentUserId) {
+      alert('Perfil não carregado ou usuário inválido.');
+      return;
+    }
+
+    const btn = document.getElementById('publishBtn');
+    btn.disabled = true;
+    const oldText = btn.innerText;
+    btn.innerText = 'Enviando...';
+
+    let mediaUrl = null;
+
+    try {
+      // Se tiver foto selecionada, envia direto pro Bunny Storage
+      if (selectedPhotoFile) {
+        btn.innerText = 'Enviando foto ao Bunny CDN...';
+        const formData = new FormData();
+        formData.append('photo', selectedPhotoFile);
+        formData.append('folder', 'posts');
+
+        const uploadRes = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!uploadRes.ok) {
+          alert('Erro ao enviar imagem para o Bunny Storage.');
+          btn.disabled = false;
+          btn.innerText = oldText;
+          return;
+        }
+
+        const uploadData = await uploadRes.json();
+        mediaUrl = uploadData.url;
+      }
+
+      // Salva postagem no banco
+      btn.innerText = 'Publicando...';
+      const isBlurred = document.getElementById('postBlurInput').checked;
+
+      const res = await fetch('/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: currentUserId, content, mediaUrl, isBlurred })
+      });
+
+      if (res.ok) {
+        document.getElementById('newPostContent').value = '';
+        clearSelectedPhoto();
+        document.getElementById('postBlurInput').checked = false;
+        loadProfile();
+      } else {
+        alert('Erro ao salvar postagem.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erro de conexão ao publicar.');
+    } finally {
+      btn.disabled = false;
+      btn.innerText = oldText;
+    }
+  }
+
+  function likePost(el) {
+    const countEl = el.querySelector('span');
+    countEl.innerText = parseInt(countEl.innerText) + 1;
+    el.style.color = 'var(--accent)';
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.innerText = text;
+    return div.innerHTML;
+  }
+
+  loadProfile();
+</script>
+
+</body>
+</html>
