@@ -38,157 +38,34 @@
 
     body {
       font-family: 'Inter', system-ui, Arial, sans-serif;
-      background: var(--bg);
+      background-color: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      background-image: radial-gradient(circle at 50% 15%, #181818 0%, var(--bg) 70%);
+      background-image: radial-gradient(circle at 50% 20%, #161616 0%, #0B0B0B 65%), radial-gradient(circle,#000 4px,transparent 5.5px), radial-gradient(circle,#000 4px,transparent 5.5px);
+      background-size: auto,24px 28px,24px 28px;
+      background-position: 0 0,0 0,12px 14px;
       line-height: 1.5;
     }
 
-    /* Textura colmeia sutil */
-    body::before {
-      content: "";
-      position: fixed; inset: 0;
-      pointer-events: none;
-      opacity: .45;
-      background-image:
-        radial-gradient(circle, #000 4px, transparent 5px),
-        radial-gradient(circle, #000 4px, transparent 5px);
-      background-size: 22px 26px;
-      background-position: 0 0, 11px 13px;
-      z-index: 0;
-    }
-
-    .wrap {
-      max-width: 1240px;
+.wrap {
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 0 16px;
+      padding: 0 24px;
       position: relative;
       z-index: 1;
     }
 
-    /* ══ TOPBAR ════════════════════════════════════ */
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(11, 11, 11, 0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-    .topbar-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      gap: 16px;
-    }
-    .brand-group {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .brand-group img {
-      height: 36px;
-      cursor: pointer;
-    }
-    .badge-member-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      color: var(--gold);
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 999px;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-    }
-    .badge-member-status::before {
-      content: "★";
-      font-size: 10px;
+@media(max-width:900px){
     }
 
-    .nav-menu {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-size: 13px;
-      overflow-x: auto;
-      white-space: nowrap;
-      scrollbar-width: none;
-    }
-    .nav-menu::-webkit-scrollbar { display: none; }
-    .nav-menu a {
-      color: var(--muted);
-      text-decoration: none;
-      padding: 6px 10px;
-      border-radius: 8px;
-      transition: all .2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .nav-menu a:hover, .nav-menu a.active {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.08);
-    }
-    .nav-counter {
-      background: rgba(166, 25, 46, 0.3);
-      color: var(--accent);
-      border: 1px solid rgba(166, 25, 46, 0.6);
-      font-size: 10px;
-      font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 10px;
-    }
 
-    .topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .theme-select {
-      background: #1a1a1a;
-      border: 1px solid var(--border);
-      color: #ccc;
-      font-size: 12px;
-      border-radius: 8px;
-      padding: 6px 8px;
-      cursor: pointer;
-      outline: none;
-    }
-
-    .btn {
-      background: var(--primary);
-      color: #fff;
-      border: 0;
-      padding: 9px 18px;
-      border-radius: 9px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background .18s, transform .15s;
-    }
-    .btn:hover { background: var(--primary-dk); transform: translateY(-1px); }
-    .btn-sm { padding: 6px 14px; font-size: 12px; }
-    .btn-ghost {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: #fff;
-    }
-    .btn-ghost:hover {
-      background: rgba(255,255,255,0.08);
-      border-color: rgba(255,255,255,0.3);
-    }
-
-    /* ══ AVISO DO FEED ═════════════════════════════ */
+    .btn{background:var(--primary);color:#fff;border:0;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;height:42px;display:inline-flex;align-items:center}
+    .btn:hover{background:var(--primary-dk)}
+    .btn-sm{height:36px;font-size:13px;padding:0 18px}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text);padding:0 22px;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;height:42px;display:inline-flex;align-items:center;text-decoration:none}
+    .btn-ghost:hover{border-color:rgba(255,255,255,.35)}
+    .btn-ghost-sm{height:36px;font-size:13px;padding:0 18px}
+/* ══ AVISO DO FEED ═════════════════════════════ */
     .feed-notice-banner {
       background: linear-gradient(90deg, rgba(166, 25, 46, 0.15) 0%, rgba(20, 20, 20, 0.8) 100%);
       border-bottom: 1px solid rgba(166, 25, 46, 0.25);
@@ -219,7 +96,7 @@
 
     /* ══ CARD SEU CONTROLE ═════════════════════════ */
     .card-control {
-      background: var(--card-bg);
+      background: rgba(255,255,255,.06);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 16px 20px;
@@ -289,29 +166,16 @@
       display: flex;
       gap: 8px;
     }
-    .tab-btn {
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 600;
-      padding: 6px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all .2s;
-    }
-    .tab-btn.active {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-    }
-    .feed-subtitle {
+    .tab-btn{background:transparent;border:none;color:var(--muted);font-size:14px;font-weight:600;padding:6px 14px;border-radius:8px;cursor:pointer}
+    .tab-btn.active{background:rgba(255,255,255,.10);color:#fff}
+.feed-subtitle {
       font-size: 12px;
       color: var(--muted);
     }
 
     /* ══ CARD DE POST ══════════════════════════════ */
     .post-card {
-      background: var(--card-bg);
+      background: rgba(255,255,255,.06);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 20px;
@@ -565,7 +429,7 @@
 
     /* ══ SIDEBAR LATERAL (INBOX & EMBAIXADOR) ══════ */
     .sidebar-widget {
-      background: var(--card-bg);
+      background: rgba(255,255,255,.06);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 18px;
@@ -863,7 +727,7 @@
       margin-bottom: 40px;
     }
     .f-card {
-      background: var(--card-bg);
+      background: rgba(255,255,255,.06);
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 18px;
@@ -899,7 +763,6 @@
     @media (max-width: 960px) {
       .main-grid { grid-template-columns: 1fr; }
       .features-grid { grid-template-columns: 1fr 1fr; }
-      .nav-menu { display: none; }
     }
     @media (max-width: 640px) {
       .features-grid { grid-template-columns: 1fr; }
@@ -911,45 +774,22 @@
         border-radius: 20px 20px 0 0;
       }
     }
-  </style>
+
+    /* BARRA DE BAIXO NO CELULAR - V5, só aparece até 900px */
+    .bottombar{display:none}
+    @media(max-width:900px){.bottombar{display:flex;position:fixed;left:0;right:0;bottom:0;background:#111;border-top:1px solid var(--border);justify-content:space-around;padding:10px 0 14px;z-index:200}.bottombar a{font-size:11px;text-align:center;color:var(--muted);text-decoration:none;line-height:1.3}.bottombar a.ativo{color:#fff;font-weight:700}body{padding-bottom:64px}}
+      </style>
 </head>
 <body>
 
-  <!-- ══ TOPBAR ══ -->
-  <header class="topbar">
-    <div class="wrap topbar-inner">
-      <div class="brand-group">
-        <a href="index.html">
-          <img src="logo-amora3.png" alt="AMORA³">
-        </a>
-        <span class="badge-member-status">PREMIUM Assinante • Verificado</span>
-      </div>
-
-      <nav class="nav-menu">
-        <a href="index.html" class="active">Página Inicial</a>
-        <a href="#" onclick="alert('Pesquisa por apelido, tag e localização.'); return false;">Pesquisar</a>
-        <a href="#" onclick="alert('Você não tem novas notificações.'); return false;">
-          Notificações <span class="nav-counter">3</span>
-        </a>
-        <a href="perfil.html">Minhas fotos <span class="nav-counter">15</span></a>
-        <a href="#">Amigos e seguidores <span class="nav-counter">76</span></a>
-        <a href="#">Recomendações</a>
-        <a href="#">Visitas recebidas <span class="nav-counter">4,5 mil</span></a>
-        <a href="perfil.html">Meu perfil</a>
-        <a href="#funcionalidades">••• Mais</a>
-      </nav>
-
-      <div class="topbar-actions">
-        <select class="theme-select" id="themeSelect" onchange="changeTheme(this.value)">
-          <option value="default">Tema: Preto</option>
-          <option value="vinho">Tema: Vinho</option>
-          <option value="meianoite">Tema: Meia-Noite</option>
-        </select>
-        <button class="btn btn-sm btn-ghost" onclick="openNewPostModal()">+ Postar</button>
-        <a class="btn btn-sm" href="checkout.html">Planos Fundador</a>
-      </div>
-    </div>
+  <!-- HEADER IGUAL AO INDEX V4 -->
+  <div class="wrap">
+  <header>
+    <img src="logo-amora3.png" alt="AMORA³">
+    <nav><a href="feed.html" class="ativo">Feed (Membros)</a><a href="index.html#funcionalidades">Funcionalidades</a><a href="index.html#embaixador">Embaixador</a><a href="index.html#motel">Motel</a><a href="index.html#termo">Termo</a></nav>
+    <div style="display:flex;gap:8px;"><a class="btn-ghost btn-sm" href="feed.html">Ver Feed</a><a class="btn btn-sm" href="cadastro.html">Quero ser Fundador</a></div>
   </header>
+  </div>
 
   <!-- ══ AVISO DO FEED ══ -->
   <div class="feed-notice-banner">
@@ -994,14 +834,28 @@
         </div>
 
         <!-- ── Abas do Feed ── -->
-        <div class="feed-tabs-header">
+        
+    <!-- TEXTOS CERTOS V5 - sem mexer no que já funcionava -->
+    <div style="background:rgba(166,25,46,.08);border:1px solid rgba(166,25,46,.25);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:#D1D1D1;line-height:1.6;">
+      <b style="color:#fff;">Só dentro da AMORA³. Sem passar telefone, sem exposição.</b> <span style="color:#888;">*opção disponível para assinantes</span><br>
+      <span style="color:#888;">*nada de perfil fake !</span> &nbsp;•&nbsp; <b style="color:#fff;">Fotos mais seguras..</b> com marca d'água e anti-print<br>
+      Bloqueie o vizinho fofoqueiro. Ninguém da sua cidade ou cidade vizinha te vê.<br>
+      <b style="color:#fff;">Orgulho de ser você.<br>Respeito a Todos.</b> <span style="color:#888;">⚠ Gêneros e opção sexual dissonante do cadastro serão bloqueados.</span>
+    </div>
+    
+    <div id="criarPostTopo" onclick="openNewPostModal()" style="background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:16px;cursor:pointer;display:flex;gap:10px;align-items:center;">
+      <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#2A080C,#7A1220);border:1.5px solid var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;">Você</div>
+      <div style="flex:1;color:var(--muted);font-size:14px;">Compartilhe uma ideia, plano para o fim de semana ou convite com discrição...</div>
+      <span style="background:var(--primary);color:#fff;padding:8px 14px;border-radius:9px;font-size:13px;font-weight:600;">+ Criar post</span>
+    </div>
+    <div class="feed-tabs-header">
           <div class="feed-tabs">
             <button class="tab-btn" onclick="switchFeedTab('seguindo', this)">Seguindo</button>
             <button class="tab-btn" onclick="switchFeedTab('para_voce', this)">Para você</button>
             <button class="tab-btn active" onclick="switchFeedTab('todos', this)">Todos</button>
           </div>
           <div class="feed-subtitle" id="feedCountSubtitle">
-            Só assinantes verificados publicam. Curtir é livre, chat só assinante. <strong>8 posts</strong> • salvos sincronizados
+            Só assinantes verificados publicam. Curtir é livre. Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.. <strong>8 posts</strong> • salvos sincronizados
           </div>
         </div>
 
@@ -1025,7 +879,7 @@
               </div>
             </div>
 
-            <div class="post-text">Bom dia pessoal, semana começando por aqui. Bora curtir o fim de semana com calma e boa conversa?</div>
+            <div class="post-text">vive a liberdade. — Bom dia pessoal, semana começando por aqui. Bora curtir o fim de semana com calma e boa conversa?</div>
 
             <!-- Foto com Marca D'Água -->
             <div class="photo-protected-box">
@@ -1049,7 +903,7 @@
               <button class="action-btn" onclick="toggleLike(1, this)">❤️ Curtir</button>
               <button class="action-btn" onclick="commentPost('Casal Aurora')">💬 Comentar</button>
               <button class="action-btn chat-btn" onclick="openChat('Casal Aurora', 'CA', 'E por aí, quais as novidades?')">Conversar no Chat</button>
-              <div class="action-sub-hint">Curtir é livre • Comentar e chat só para assinantes</div>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
             </div>
           </article>
 
@@ -1081,7 +935,7 @@
               <button class="action-btn" onclick="toggleLike(2, this)">❤️ Curtir</button>
               <button class="action-btn" onclick="commentPost('Marina Solo')">💬 Comentar</button>
               <button class="action-btn chat-btn" onclick="openChat('Marina Solo', 'MS', 'Sempre linda, adorei seu perfil')">Conversar no Chat</button>
-              <div class="action-sub-hint">Curtir é livre • Comentar e chat só para assinantes</div>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
             </div>
           </article>
 
@@ -1125,7 +979,7 @@
               <button class="action-btn" onclick="toggleLike(3, this)">❤️ Curtir</button>
               <button class="action-btn" onclick="commentPost('Casal Horizonte')">💬 Comentar</button>
               <button class="action-btn chat-btn" onclick="openChat('Casal Horizonte', 'CH', 'Boa noite, vamos conversar?')">Conversar no Chat</button>
-              <div class="action-sub-hint">Curtir é livre • Comentar e chat só para assinantes</div>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
             </div>
           </article>
 
@@ -1171,7 +1025,7 @@
               <button class="action-btn" onclick="toggleLike(4, this)">❤️ Curtir</button>
               <button class="action-btn" onclick="commentPost('Lia Valinhos')">💬 Comentar</button>
               <button class="action-btn chat-btn" onclick="openChat('Lia Valinhos', 'LV', 'Boa noite, tudo bem por aí?')">Conversar no Chat</button>
-              <div class="action-sub-hint">Curtir é livre • Comentar e chat só para assinantes</div>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
             </div>
           </article>
 
@@ -1215,7 +1069,7 @@
               <button class="action-btn" onclick="toggleLike(5, this)">❤️ Curtir</button>
               <button class="action-btn" onclick="commentPost('Casal Serena')">💬 Comentar</button>
               <button class="action-btn chat-btn" onclick="openChat('Casal Serena', 'CS', 'Tava no vale, e vocês?')">Conversar no Chat</button>
-              <div class="action-sub-hint">Curtir é livre • Comentar e chat só para assinantes</div>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
             </div>
           </article>
 
@@ -1247,7 +1101,7 @@
               <button class="action-btn" onclick="toggleLike(6, this)">❤️ Curtir</button>
               <button class="action-btn" onclick="commentPost('Rafael Jundiaí')">💬 Comentar</button>
               <button class="action-btn chat-btn" onclick="openChat('Rafael Jundiaí', 'RJ', 'Em Jundiaí, pertinho de você')">Conversar no Chat</button>
-              <div class="action-sub-hint">Curtir é livre • Comentar e chat só para assinantes</div>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
             </div>
           </article>
 
@@ -1291,7 +1145,7 @@
               <button class="action-btn" onclick="toggleLike(7, this)">❤️ Curtir</button>
               <button class="action-btn" onclick="commentPost('Casal Maré')">💬 Comentar</button>
               <button class="action-btn chat-btn" onclick="openChat('Casal Maré', 'CM', 'Bora no vale no fim de semana?')">Conversar no Chat</button>
-              <div class="action-sub-hint">Curtir é livre • Comentar e chat só para assinantes</div>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
             </div>
           </article>
 
@@ -1323,7 +1177,7 @@
               <button class="action-btn" onclick="toggleLike(8, this)">❤️ Curtir</button>
               <button class="action-btn" onclick="commentPost('Sofia Praia Grande')">💬 Comentar</button>
               <button class="action-btn chat-btn" onclick="openChat('Sofia Praia Grande', 'SP', 'Então já sabe, meus pensamentos estão em você')">Conversar no Chat</button>
-              <div class="action-sub-hint">Curtir é livre • Comentar e chat só para assinantes</div>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
             </div>
           </article>
 
@@ -1579,7 +1433,7 @@
     <!-- ══ FOOTER ══ -->
     <footer>
       <div style="display:flex; align-items:center; gap:12px;">
-        <img src="logo-amora3.png" alt="AMORA³" style="height:24px; opacity:0.8;">
+        <img src="logo-amora3.png" alt="AMORA³" style="height:24px; opacity:0.9; background:transparent; border:0;">
         <span>AMORA³ • Rede social privada para adultos</span>
       </div>
       <div>
@@ -1669,7 +1523,7 @@
       });
 
       document.getElementById('feedCountSubtitle').innerHTML = 
-        `Só assinantes verificados publicam. Curtir é livre, chat só assinante. <strong>${visibleCount} posts</strong> exibidos para raio de ${maxKm === 9999 ? 'Brasil todo' : maxKm + ' km'}`;
+        `Só assinantes verificados publicam. Curtir é livre. Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.. <strong>${visibleCount} posts</strong> exibidos para raio de ${maxKm === 9999 ? 'Brasil todo' : maxKm + ' km'}`;
     }
 
     // Curtir Post
@@ -1787,5 +1641,9 @@
       }
     }
   </script>
+
+  <!-- BARRA DE BAIXO NO CELULAR -->
+  <nav class="bottombar"><a href="index.html">🏠<br>Início</a><a href="feed.html" class="ativo">📰<br>Feed</a><a href="#" onclick="openNewPostModal();return false;">✨<br>Criar</a><a href="#" onclick="openChat('INBOX','IN','Chat privado');return false;">💬<br>Chat</a><a href="perfil.html">👤<br>Conta</a></nav>
+  <div style="text-align:center;padding:14px;color:#666;font-size:11px;">🐝 COLMEIA V8 • IGUAL AO INDEX • 24/11</div>
 </body>
 </html>
