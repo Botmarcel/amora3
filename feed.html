@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMORA³ — Feed Principal de Membros</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary:       #A6192E;
+      --primary-dk:    #7A1220;
+      --bg:            #0B0B0B;
+      --surface:       #141414;
+      --card-bg:       rgba(255, 255, 255, 0.05);
+      --card-hover:    rgba(255, 255, 255, 0.08);
+      --border:        rgba(255, 255, 255, 0.12);
+      --text:          #FFFFFF;
+      --muted:         #A3A3A3;
+      --subtle:        #6E6E6E;
+      --accent:        #E06070;
+      --gold:          #F59E0B;
+      --success:       #4ADE80;
+    }
+
+    /* Temas */
+    body.theme-vinho {
+      --bg: #120507;
+      --surface: #1C0A0D;
+      --card-bg: rgba(166, 25, 46, 0.08);
+    }
+    body.theme-meianoite {
+      --bg: #050811;
+      --surface: #0A0F1F;
+      --card-bg: rgba(255, 255, 255, 0.04);
+    }
+
+    body {
+      font-family: 'Inter', system-ui, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      background-image: radial-gradient(circle at 50% 20%, #161616 0%, #0B0B0B 65%), radial-gradient(circle,#000 4px,transparent 5.5px), radial-gradient(circle,#000 4px,transparent 5.5px);
+      background-size: auto,24px 28px,24px 28px;
+      background-position: 0 0,0 0,12px 14px;
+      line-height: 1.5;
+    }
+
+.wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+@media(max-width:900px){
+    }
+
+
+    .btn{background:var(--primary);color:#fff;border:0;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;height:42px;display:inline-flex;align-items:center}
+    .btn:hover{background:var(--primary-dk)}
+    .btn-sm{height:36px;font-size:13px;padding:0 18px}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text);padding:0 22px;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;height:42px;display:inline-flex;align-items:center;text-decoration:none}
+    .btn-ghost:hover{border-color:rgba(255,255,255,.35)}
+    .btn-ghost-sm{height:36px;font-size:13px;padding:0 18px}
+/* ══ AVISO DO FEED ═════════════════════════════ */
+    .feed-notice-banner {
+      background: linear-gradient(90deg, rgba(166, 25, 46, 0.15) 0%, rgba(20, 20, 20, 0.8) 100%);
+      border-bottom: 1px solid rgba(166, 25, 46, 0.25);
+      padding: 8px 0;
+      font-size: 12px;
+      color: #E2E2E2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .feed-notice-banner .badge-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      background: var(--success);
+      border-radius: 50%;
+      margin-right: 6px;
+      box-shadow: 0 0 6px var(--success);
+    }
+
+    /* ══ LAYOUT PRINCIPAL ══════════════════════════ */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+      padding: 24px 0 60px;
+    }
+
+    /* ══ CARD SEU CONTROLE ═════════════════════════ */
+    .card-control {
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      backdrop-filter: blur(8px);
+    }
+    .control-title {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .control-desc {
+      font-size: 13px;
+      color: #fff;
+    }
+    .control-desc strong { color: var(--gold); }
+    .distance-filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #141414;
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .distance-btn {
+      background: transparent;
+      border: 0;
+      color: var(--muted);
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .distance-btn.active {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(166, 25, 46, 0.4);
+    }
+    .distance-btn:hover:not(.active) {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* ══ ABAS DO FEED ═════════════════════════════ */
+    .feed-tabs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .feed-tabs {
+      display: flex;
+      gap: 8px;
+    }
+    .tab-btn{background:transparent;border:none;color:var(--muted);font-size:14px;font-weight:600;padding:6px 14px;border-radius:8px;cursor:pointer}
+    .tab-btn.active{background:rgba(255,255,255,.10);color:#fff}
+.feed-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* ══ CARD DE POST ══════════════════════════════ */
+    .post-card {
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 18px;
+      backdrop-filter: blur(8px);
+      transition: border-color .2s;
+    }
+    .post-card:hover {
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .avatar-initials {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2A080C, #7A1220);
+      border: 1.5px solid var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .post-user-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .post-name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .post-author-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .badge-subscriber {
+      background: rgba(166, 25, 46, 0.2);
+      border: 1px solid rgba(166, 25, 46, 0.5);
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+    .badge-verified-sm {
+      background: rgba(74, 222, 128, 0.15);
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      color: var(--success);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+    .post-time {
+      font-size: 11px;
+      color: var(--subtle);
+    }
+    .post-meta-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .distance-tag {
+      color: #E2E2E2;
+      font-weight: 500;
+    }
+
+    .post-text {
+      font-size: 14px;
+      color: #E8E8E8;
+      line-height: 1.6;
+      margin-bottom: 14px;
+      white-space: pre-line;
+    }
+
+    /* ══ ÁREA DE FOTO COM MARCA D'ÁGUA ═════════════ */
+    .photo-protected-box {
+      position: relative;
+      background: #141414;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 14px;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .photo-placeholder {
+      height: 240px;
+      background: linear-gradient(135deg, #1c1417 0%, #101010 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Marca d'água repetida anti-print */
+    .watermark-overlay {
+      position: absolute;
+      inset: -50%;
+      display: flex;
+      flex-wrap: wrap;
+      align-content: space-around;
+      justify-content: space-around;
+      transform: rotate(-25deg);
+      opacity: 0.16;
+      pointer-events: none;
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 2.2;
+      letter-spacing: 0.12em;
+    }
+    .photo-badge-top {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .photo-counter {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: #fff;
+    }
+
+    /* ══ AÇÕES DO POST ═════════════════════════════ */
+    .post-stats-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 10px;
+    }
+    .post-actions-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .action-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .2s;
+    }
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .action-btn.liked {
+      background: rgba(166, 25, 46, 0.2);
+      border-color: var(--primary);
+      color: var(--accent);
+    }
+    .action-btn.chat-btn {
+      margin-left: auto;
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .action-btn.chat-btn:hover {
+      background: var(--primary-dk);
+    }
+    .action-sub-hint {
+      width: 100%;
+      font-size: 11px;
+      color: var(--subtle);
+      margin-top: 4px;
+    }
+
+    /* ══ CARD MOTEL PARCEIRO NO FEED ═══════════════ */
+    .motel-feed-card {
+      background: linear-gradient(135deg, rgba(166, 25, 46, 0.12) 0%, rgba(20, 20, 20, 0.95) 100%);
+      border: 1.5px solid rgba(166, 25, 46, 0.35);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+    .motel-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(166, 25, 46, 0.25);
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    .motel-feed-card h3 {
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .motel-status {
+      font-size: 12px;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .motel-feed-card p {
+      font-size: 13px;
+      color: #D1D1D1;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .motel-cta-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* ══ SIDEBAR LATERAL (INBOX & EMBAIXADOR) ══════ */
+    .sidebar-widget {
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(8px);
+    }
+    .inbox-header-tabs {
+      display: flex;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+    .inbox-tab {
+      background: transparent;
+      border: 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      cursor: pointer;
+      padding-bottom: 4px;
+      position: relative;
+    }
+    .inbox-tab.active {
+      color: #fff;
+    }
+    .inbox-tab.active::after {
+      content: "";
+      position: absolute;
+      bottom: -11px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary);
+    }
+
+    .inbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 480px;
+      overflow-y: auto;
+    }
+    .inbox-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background .18s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .inbox-item:hover {
+      background: var(--card-hover);
+    }
+    .inbox-item.active {
+      background: rgba(166, 25, 46, 0.15);
+      border-left: 2px solid var(--primary);
+    }
+    .inbox-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #1f1f1f;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .inbox-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .inbox-name-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .inbox-time {
+      font-size: 11px;
+      color: var(--subtle);
+      font-weight: 400;
+    }
+    .inbox-msg-preview {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+    .inbox-footer-action {
+      margin-top: 14px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+
+    /* Card Embaixador na Sidebar */
+    .embaixador-widget {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(20, 20, 20, 0.95) 100%);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      text-align: center;
+    }
+    .embaixador-widget h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .embaixador-widget p {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    /* ══ JANELA FLUTUANTE DE CHAT ══════════════════ */
+    .chat-drawer {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 380px;
+      height: 520px;
+      background: #121212;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 18px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+      display: none;
+      flex-direction: column;
+      z-index: 1000;
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+    }
+    .chat-drawer.open {
+      display: flex;
+    }
+    .chat-drawer-header {
+      background: #181818;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-target-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-close-btn {
+      background: transparent;
+      border: 0;
+      color: var(--muted);
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .chat-drawer-body {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+    }
+    .chat-watermark {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.05;
+      font-size: 24px;
+      font-weight: 900;
+      pointer-events: none;
+      transform: rotate(-30deg);
+      user-select: none;
+    }
+    .chat-bubble {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .chat-bubble.them {
+      align-self: flex-start;
+      background: #202020;
+      border: 1px solid var(--border);
+      color: #fff;
+    }
+    .chat-bubble.me {
+      align-self: flex-end;
+      background: var(--primary);
+      color: #fff;
+    }
+    .chat-drawer-footer {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      background: #161616;
+      display: flex;
+      gap: 8px;
+    }
+    .chat-input {
+      flex: 1;
+      background: #0d0d0d;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+    .chat-input:focus {
+      border-color: var(--primary);
+    }
+
+    /* ══ MODAL DE POSTAR ═══════════════════════════ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .modal-box {
+      background: #141414;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 520px;
+      padding: 24px;
+    }
+    .modal-box h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .modal-textarea {
+      width: 100%;
+      height: 110px;
+      background: #0B0B0B;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      resize: none;
+      margin-bottom: 14px;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* ══ SEÇÕES INFORMATIVAS NO RODAPÉ ═════════════ */
+    .landing-sections {
+      border-top: 1px solid var(--border);
+      padding: 48px 0;
+      margin-top: 40px;
+    }
+    .section-heading {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .section-subtext {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .f-card {
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .f-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .f-card p { font-size: 13px; color: var(--muted); }
+
+    .terms-box {
+      background: rgba(166, 25, 46, 0.08);
+      border: 1px solid rgba(166, 25, 46, 0.3);
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 40px;
+    }
+    .terms-box h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .terms-box p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #666;
+      font-size: 12px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: #fff; }
+
+    /* ══ RESPONSIVIDADE ════════════════════════════ */
+    @media (max-width: 960px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .chat-drawer {
+        width: 100%;
+        height: 80vh;
+        bottom: 0;
+        right: 0;
+        border-radius: 20px 20px 0 0;
+      }
+    }
+
+    /* BARRA DE BAIXO NO CELULAR - V5, só aparece até 900px */
+    .bottombar{display:none}
+    @media(max-width:900px){.bottombar{display:flex;position:fixed;left:0;right:0;bottom:0;background:#111;border-top:1px solid var(--border);justify-content:space-around;padding:10px 0 14px;z-index:200}.bottombar a{font-size:11px;text-align:center;color:var(--muted);text-decoration:none;line-height:1.3}.bottombar a.ativo{color:#fff;font-weight:700}body{padding-bottom:64px}}
+      </style>
+</head>
+<body>
+
+  <!-- HEADER IGUAL AO INDEX V4 -->
+  <div class="wrap">
+  <header>
+    <img src="logo-amora3.png" alt="AMORA³">
+    <nav><a href="feed.html" class="ativo">Feed (Membros)</a><a href="index.html#funcionalidades">Funcionalidades</a><a href="index.html#embaixador">Embaixador</a><a href="index.html#motel">Motel</a><a href="index.html#termo">Termo</a></nav>
+    <div style="display:flex;gap:8px;"><a class="btn-ghost btn-sm" href="feed.html">Ver Feed</a><a class="btn btn-sm" href="cadastro.html">Quero ser Fundador</a></div>
+  </header>
+  </div>
+
+  <!-- ══ AVISO DO FEED ══ -->
+  <div class="feed-notice-banner">
+    <div class="wrap" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+      <div>
+        <span class="badge-dot"></span>
+        <span>Você está no feed principal, com posts de membros verificados.</span>
+      </div>
+      <div style="color:var(--muted); font-size:11px;">
+        Anti-print ativo • Rastreamento por visualizador
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <div class="main-grid">
+
+      <!-- ══════════════════════════════════════════
+           COLUNA ESQUERDA: FEED PRINCIPAL
+      ══════════════════════════════════════════ -->
+      <main>
+
+        <!-- ── Card SEU CONTROLE ── -->
+        <div class="card-control">
+          <div>
+            <div class="control-title">SEU CONTROLE</div>
+            <div class="control-desc">
+              Quem pode me chamar: <strong>Todos os verificados</strong>
+              <button class="btn btn-ghost btn-sm" style="margin-left: 8px; padding: 2px 8px; font-size: 11px;" onclick="adjustPrivacy()">Ajustar privacidade</button>
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:12px; color:var(--muted);">Bloqueio por distância:</span>
+            <div class="distance-filter-group" id="distanceFilterGroup">
+              <button class="distance-btn" onclick="filterByDistance(50, this)">50km</button>
+              <button class="distance-btn" onclick="filterByDistance(100, this)">100km</button>
+              <button class="distance-btn active" onclick="filterByDistance(9999, this)">Brasil todo</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Abas do Feed ── -->
+        
+    <!-- TEXTOS CERTOS V5 - sem mexer no que já funcionava -->
+    <div style="background:rgba(166,25,46,.08);border:1px solid rgba(166,25,46,.25);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:#D1D1D1;line-height:1.6;">
+      <b style="color:#fff;">Só dentro da AMORA³. Sem passar telefone, sem exposição.</b> <span style="color:#888;">*opção disponível para assinantes</span><br>
+      <span style="color:#888;">*nada de perfil fake !</span> &nbsp;•&nbsp; <b style="color:#fff;">Fotos mais seguras..</b> com marca d'água e anti-print<br>
+      Bloqueie o vizinho fofoqueiro. Ninguém da sua cidade ou cidade vizinha te vê.<br>
+      <b style="color:#fff;">Orgulho de ser você.<br>Respeito a Todos.</b> <span style="color:#888;">⚠ Gêneros e opção sexual dissonante do cadastro serão bloqueados.</span>
+    </div>
+    
+    <div id="criarPostTopo" onclick="openNewPostModal()" style="background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:16px;cursor:pointer;display:flex;gap:10px;align-items:center;">
+      <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#2A080C,#7A1220);border:1.5px solid var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;">Você</div>
+      <div style="flex:1;color:var(--muted);font-size:14px;">Compartilhe uma ideia, plano para o fim de semana ou convite com discrição...</div>
+      <span style="background:var(--primary);color:#fff;padding:8px 14px;border-radius:9px;font-size:13px;font-weight:600;">+ Criar post</span>
+    </div>
+    <div class="feed-tabs-header">
+          <div class="feed-tabs">
+            <button class="tab-btn" onclick="switchFeedTab('seguindo', this)">Seguindo</button>
+            <button class="tab-btn" onclick="switchFeedTab('para_voce', this)">Para você</button>
+            <button class="tab-btn active" onclick="switchFeedTab('todos', this)">Todos</button>
+          </div>
+          <div class="feed-subtitle" id="feedCountSubtitle">
+            Só assinantes verificados publicam. Curtir é livre. Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.. <strong>8 posts</strong> • salvos sincronizados
+          </div>
+        </div>
+
+        <!-- ── LISTA DE POSTS DO FEED ── -->
+        <div id="postsContainer">
+
+          <!-- POST 1: Casal Aurora -->
+          <article class="post-card" data-distance="18">
+            <div class="post-header">
+              <div class="avatar-initials">CA</div>
+              <div class="post-user-info">
+                <div class="post-name-row">
+                  <span class="post-author-name">Casal Aurora</span>
+                  <span class="badge-subscriber">Assinante</span>
+                  <span class="badge-verified-sm">Verificado</span>
+                  <span class="post-time">• 11 min</span>
+                </div>
+                <div class="post-meta-sub">
+                  Casal • São Paulo/SP • <span class="distance-tag">18 km de você</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="post-text">vive a liberdade. — Bom dia pessoal, semana começando por aqui. Bora curtir o fim de semana com calma e boa conversa?</div>
+
+            <!-- Foto com Marca D'Água -->
+            <div class="photo-protected-box">
+              <div class="photo-placeholder">
+                <div class="watermark-overlay">
+                  AMORA³ • Anti-print • Rastreável • AMORA³ • Anti-print • AMORA³ • Anti-print • Rastreável • AMORA³
+                </div>
+                <span style="font-size:36px; z-index:2;">🥂 ✨</span>
+                <span style="font-size:12px; color:var(--muted); z-index:2;">Foto privada protegida</span>
+              </div>
+              <div class="photo-badge-top">Foto com marca d'água • AMORA³ • Anti-print</div>
+              <div class="photo-counter">1 / 2</div>
+            </div>
+
+            <div class="post-stats-row">
+              <span>2 comentários</span>
+              <span><strong id="likes-1">12</strong> curtidas • <a href="#" style="color:var(--muted);" onclick="alert('Membros que curtiram: Rafael Jundiaí, Marina Solo e outros 10.'); return false;">ver curtidas</a></span>
+            </div>
+
+            <div class="post-actions-row">
+              <button class="action-btn" onclick="toggleLike(1, this)">❤️ Curtir</button>
+              <button class="action-btn" onclick="commentPost('Casal Aurora')">💬 Comentar</button>
+              <button class="action-btn chat-btn" onclick="openChat('Casal Aurora', 'CA', 'E por aí, quais as novidades?')">Conversar no Chat</button>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
+            </div>
+          </article>
+
+          <!-- POST 2: Marina Solo -->
+          <article class="post-card" data-distance="8">
+            <div class="post-header">
+              <div class="avatar-initials">MS</div>
+              <div class="post-user-info">
+                <div class="post-name-row">
+                  <span class="post-author-name">Marina Solo</span>
+                  <span class="badge-subscriber">Assinante</span>
+                  <span class="badge-verified-sm">Verificado</span>
+                  <span class="post-time">• 12 min</span>
+                </div>
+                <div class="post-meta-sub">
+                  Mulher • Jundiaí/SP • <span class="distance-tag">8 km de você</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="post-text">Bom dia! Alguém conhece clube em Valinhos? Quero dicas de lugares tranquilos para conhecer gente nova.</div>
+
+            <div class="post-stats-row">
+              <span>2 comentários</span>
+              <span><strong id="likes-2">23</strong> curtidas • <a href="#" style="color:var(--muted);" onclick="alert('23 curtidas recebidas.'); return false;">ver curtidas</a></span>
+            </div>
+
+            <div class="post-actions-row">
+              <button class="action-btn" onclick="toggleLike(2, this)">❤️ Curtir</button>
+              <button class="action-btn" onclick="commentPost('Marina Solo')">💬 Comentar</button>
+              <button class="action-btn chat-btn" onclick="openChat('Marina Solo', 'MS', 'Sempre linda, adorei seu perfil')">Conversar no Chat</button>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
+            </div>
+          </article>
+
+          <!-- POST 3: Casal Horizonte -->
+          <article class="post-card" data-distance="28">
+            <div class="post-header">
+              <div class="avatar-initials">CH</div>
+              <div class="post-user-info">
+                <div class="post-name-row">
+                  <span class="post-author-name">Casal Horizonte</span>
+                  <span class="badge-subscriber">Assinante</span>
+                  <span class="badge-verified-sm">Verificado</span>
+                  <span class="post-time">• 12 min</span>
+                </div>
+                <div class="post-meta-sub">
+                  Casal • Campinas/SP • <span class="distance-tag">28 km de você</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="post-text">Bom dia, semana começando. Gostamos de planejar tudo com calma e respeito. Quem também é de Campinas?</div>
+
+            <div class="photo-protected-box">
+              <div class="photo-placeholder">
+                <div class="watermark-overlay">
+                  AMORA³ • Anti-print • Rastreável • AMORA³ • Anti-print • AMORA³ • Anti-print • Rastreável • AMORA³
+                </div>
+                <span style="font-size:36px; z-index:2;">☕ 🌅</span>
+                <span style="font-size:12px; color:var(--muted); z-index:2;">Foto privada protegida</span>
+              </div>
+              <div class="photo-badge-top">Foto com marca d'água • AMORA³ • Anti-print</div>
+              <div class="photo-counter">1 / 1</div>
+            </div>
+
+            <div class="post-stats-row">
+              <span>2 comentários</span>
+              <span><strong id="likes-3">9</strong> curtidas • <a href="#" style="color:var(--muted);" onclick="alert('9 curtidas.'); return false;">ver curtidas</a></span>
+            </div>
+
+            <div class="post-actions-row">
+              <button class="action-btn" onclick="toggleLike(3, this)">❤️ Curtir</button>
+              <button class="action-btn" onclick="commentPost('Casal Horizonte')">💬 Comentar</button>
+              <button class="action-btn chat-btn" onclick="openChat('Casal Horizonte', 'CH', 'Boa noite, vamos conversar?')">Conversar no Chat</button>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
+            </div>
+          </article>
+
+          <!-- CARD ESPECIAL: MOTEL PARCEIRO (No meio do Feed) -->
+          <div class="motel-feed-card" id="feedMotelCard">
+            <span class="motel-tag">🏨 Motel Parceiro</span>
+            <h3>Motel Parceiro</h3>
+            <div class="motel-status">● Sem parceiro confirmado ainda</div>
+            <p>
+              <strong>Nossa proposta para motéis:</strong> hoje encontros entre 3 ou mais pessoas acontecem escondidos, gerando risco para o motel e para os clientes. Queremos que os motéis permitam isso com registro dos demais ocupantes, oferecendo mais segurança para todos. O motel pode cobrar uma pequena taxa pelo ocupante extra ou oferecer como cortesia. Estamos contatando motéis para fechar essa parceria.
+            </p>
+            <div class="motel-cta-group">
+              <a href="#motel" class="btn btn-sm">Seja um motel parceiro</a>
+              <button class="btn btn-ghost btn-sm" onclick="alert('Você será avisado assim que os primeiros motéis forem confirmados na sua região!');">Quero ser avisado quando fechar</button>
+            </div>
+          </div>
+
+          <!-- POST 4: Lia Valinhos -->
+          <article class="post-card" data-distance="14">
+            <div class="post-header">
+              <div class="avatar-initials">LV</div>
+              <div class="post-user-info">
+                <div class="post-name-row">
+                  <span class="post-author-name">Lia Valinhos</span>
+                  <span class="badge-subscriber">Assinante</span>
+                  <span class="badge-verified-sm">Verificado</span>
+                  <span class="post-time">• 14 min</span>
+                </div>
+                <div class="post-meta-sub">
+                  Mulher • Valinhos/SP • <span class="distance-tag">14 km de você</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="post-text">Bom dia pessoal! Café e boa conversa para começar o dia. Como foi a semana de vocês?</div>
+
+            <div class="post-stats-row">
+              <span>1 comentário</span>
+              <span><strong id="likes-4">18</strong> curtidas • <a href="#" style="color:var(--muted);" onclick="alert('18 curtidas.'); return false;">ver curtidas</a></span>
+            </div>
+
+            <div class="post-actions-row">
+              <button class="action-btn" onclick="toggleLike(4, this)">❤️ Curtir</button>
+              <button class="action-btn" onclick="commentPost('Lia Valinhos')">💬 Comentar</button>
+              <button class="action-btn chat-btn" onclick="openChat('Lia Valinhos', 'LV', 'Boa noite, tudo bem por aí?')">Conversar no Chat</button>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
+            </div>
+          </article>
+
+          <!-- POST 5: Casal Serena -->
+          <article class="post-card" data-distance="22">
+            <div class="post-header">
+              <div class="avatar-initials">CS</div>
+              <div class="post-user-info">
+                <div class="post-name-row">
+                  <span class="post-author-name">Casal Serena</span>
+                  <span class="badge-subscriber">Assinante</span>
+                  <span class="badge-verified-sm">Verificado</span>
+                  <span class="post-time">• 17 min</span>
+                </div>
+                <div class="post-meta-sub">
+                  Casal • Itatiba/SP • <span class="distance-tag">22 km de você</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="post-text">Bom dia! Priorizamos discrição e respeito. Adoramos jantares tranquilos e viagens curtas.</div>
+
+            <div class="photo-protected-box">
+              <div class="photo-placeholder">
+                <div class="watermark-overlay">
+                  AMORA³ • Anti-print • Rastreável • AMORA³ • Anti-print • AMORA³ • Anti-print • Rastreável • AMORA³
+                </div>
+                <span style="font-size:36px; z-index:2;">🍷 🕯️</span>
+                <span style="font-size:12px; color:var(--muted); z-index:2;">Foto privada protegida</span>
+              </div>
+              <div class="photo-badge-top">Foto com marca d'água • AMORA³ • Anti-print</div>
+              <div class="photo-counter">1 / 2</div>
+            </div>
+
+            <div class="post-stats-row">
+              <span>2 comentários</span>
+              <span><strong id="likes-5">15</strong> curtidas • <a href="#" style="color:var(--muted);" onclick="alert('15 curtidas.'); return false;">ver curtidas</a></span>
+            </div>
+
+            <div class="post-actions-row">
+              <button class="action-btn" onclick="toggleLike(5, this)">❤️ Curtir</button>
+              <button class="action-btn" onclick="commentPost('Casal Serena')">💬 Comentar</button>
+              <button class="action-btn chat-btn" onclick="openChat('Casal Serena', 'CS', 'Tava no vale, e vocês?')">Conversar no Chat</button>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
+            </div>
+          </article>
+
+          <!-- POST 6: Rafael Jundiaí -->
+          <article class="post-card" data-distance="5">
+            <div class="post-header">
+              <div class="avatar-initials">RJ</div>
+              <div class="post-user-info">
+                <div class="post-name-row">
+                  <span class="post-author-name">Rafael Jundiaí</span>
+                  <span class="badge-subscriber">Assinante</span>
+                  <span class="badge-verified-sm">Verificado</span>
+                  <span class="post-time">• 19 min</span>
+                </div>
+                <div class="post-meta-sub">
+                  Homem • Jundiaí/SP • <span class="distance-tag">5 km de você</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="post-text">Bom dia! Sou de Jundiaí. Curto conversar primeiro e conhecer com calma antes de qualquer encontro.</div>
+
+            <div class="post-stats-row">
+              <span>1 comentário</span>
+              <span><strong id="likes-6">7</strong> curtidas • <a href="#" style="color:var(--muted);" onclick="alert('7 curtidas.'); return false;">ver curtidas</a></span>
+            </div>
+
+            <div class="post-actions-row">
+              <button class="action-btn" onclick="toggleLike(6, this)">❤️ Curtir</button>
+              <button class="action-btn" onclick="commentPost('Rafael Jundiaí')">💬 Comentar</button>
+              <button class="action-btn chat-btn" onclick="openChat('Rafael Jundiaí', 'RJ', 'Em Jundiaí, pertinho de você')">Conversar no Chat</button>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
+            </div>
+          </article>
+
+          <!-- POST 7: Casal Maré -->
+          <article class="post-card" data-distance="68">
+            <div class="post-header">
+              <div class="avatar-initials">CM</div>
+              <div class="post-user-info">
+                <div class="post-name-row">
+                  <span class="post-author-name">Casal Maré</span>
+                  <span class="badge-subscriber">Assinante</span>
+                  <span class="badge-verified-sm">Verificado</span>
+                  <span class="post-time">• 23 min</span>
+                </div>
+                <div class="post-meta-sub">
+                  Casal • Santos/SP • <span class="distance-tag">68 km de você</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="post-text">Parece que vai fazer sol hoje. Alguém com dicas de passeio leve na Baixada?</div>
+
+            <div class="photo-protected-box">
+              <div class="photo-placeholder">
+                <div class="watermark-overlay">
+                  AMORA³ • Anti-print • Rastreável • AMORA³ • Anti-print • AMORA³ • Anti-print • Rastreável • AMORA³
+                </div>
+                <span style="font-size:36px; z-index:2;">🌊 ☀️</span>
+                <span style="font-size:12px; color:var(--muted); z-index:2;">Foto privada protegida</span>
+              </div>
+              <div class="photo-badge-top">Foto com marca d'água • AMORA³ • Anti-print</div>
+              <div class="photo-counter">1 / 1</div>
+            </div>
+
+            <div class="post-stats-row">
+              <span>2 comentários</span>
+              <span><strong id="likes-7">11</strong> curtidas • <a href="#" style="color:var(--muted);" onclick="alert('11 curtidas.'); return false;">ver curtidas</a></span>
+            </div>
+
+            <div class="post-actions-row">
+              <button class="action-btn" onclick="toggleLike(7, this)">❤️ Curtir</button>
+              <button class="action-btn" onclick="commentPost('Casal Maré')">💬 Comentar</button>
+              <button class="action-btn chat-btn" onclick="openChat('Casal Maré', 'CM', 'Bora no vale no fim de semana?')">Conversar no Chat</button>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
+            </div>
+          </article>
+
+          <!-- POST 8: Sofia Praia Grande -->
+          <article class="post-card" data-distance="82">
+            <div class="post-header">
+              <div class="avatar-initials">SP</div>
+              <div class="post-user-info">
+                <div class="post-name-row">
+                  <span class="post-author-name">Sofia Praia Grande</span>
+                  <span class="badge-subscriber">Assinante</span>
+                  <span class="badge-verified-sm">Verificado</span>
+                  <span class="post-time">• 26 min</span>
+                </div>
+                <div class="post-meta-sub">
+                  Mulher • Praia Grande/SP • <span class="distance-tag">82 km de você</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="post-text">Bom dia! Alguém afim de um café na orla no fim de semana? Só conversa boa e sem pressa.</div>
+
+            <div class="post-stats-row">
+              <span>2 comentários</span>
+              <span><strong id="likes-8">31</strong> curtidas • <a href="#" style="color:var(--muted);" onclick="alert('31 curtidas.'); return false;">ver curtidas</a></span>
+            </div>
+
+            <div class="post-actions-row">
+              <button class="action-btn" onclick="toggleLike(8, this)">❤️ Curtir</button>
+              <button class="action-btn" onclick="commentPost('Sofia Praia Grande')">💬 Comentar</button>
+              <button class="action-btn chat-btn" onclick="openChat('Sofia Praia Grande', 'SP', 'Então já sabe, meus pensamentos estão em você')">Conversar no Chat</button>
+              <div class="action-sub-hint">Curtir é livre • Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.</div>
+            </div>
+          </article>
+
+        </div>
+
+        <div style="text-align:center; padding: 24px 0; color:var(--subtle); font-size:12px; border-top:1px dashed var(--border);">
+          Posts fictícios de demonstração. Fotos com marca d'água no chat. Conteúdo explícito não é permitido.
+        </div>
+
+      </main>
+
+      <!-- ══════════════════════════════════════════
+           COLUNA DIREITA: SIDEBAR / INBOX
+      ══════════════════════════════════════════ -->
+      <aside>
+
+        <!-- Widget: INBOX / CHAT -->
+        <div class="sidebar-widget">
+          <div class="inbox-header-tabs">
+            <button class="inbox-tab active" onclick="switchInboxTab('inbox', this)">INBOX (8)</button>
+            <button class="inbox-tab" onclick="switchInboxTab('arquivadas', this)">ARQUIVADAS (0)</button>
+          </div>
+
+          <div class="inbox-list" id="inboxList">
+            <!-- Item 1 -->
+            <div class="inbox-item" onclick="openChat('Casal Aurora', 'CA', 'E por aí, quais as novidades?')">
+              <div class="inbox-avatar">CA</div>
+              <div class="inbox-info">
+                <div class="inbox-name-row">
+                  <span>Casal Aurora</span>
+                  <span class="inbox-time">6 h</span>
+                </div>
+                <div class="inbox-msg-preview">E por aí, quais as novidades?</div>
+              </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="inbox-item" onclick="openChat('Marina Solo', 'MS', 'Sempre linda, adorei seu perfil')">
+              <div class="inbox-avatar">MS</div>
+              <div class="inbox-info">
+                <div class="inbox-name-row">
+                  <span>Marina Solo</span>
+                  <span class="inbox-time">6 h</span>
+                </div>
+                <div class="inbox-msg-preview">Sempre linda, adorei seu perfil</div>
+              </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="inbox-item" onclick="openChat('Lia Valinhos', 'LV', 'Boa noite, tudo bem por aí?')">
+              <div class="inbox-avatar">LV</div>
+              <div class="inbox-info">
+                <div class="inbox-name-row">
+                  <span>Lia Valinhos</span>
+                  <span class="inbox-time">6 h</span>
+                </div>
+                <div class="inbox-msg-preview">Boa noite, tudo bem por aí?</div>
+              </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="inbox-item" onclick="openChat('Casal Horizonte', 'CH', 'Boa noite, vamos conversar?')">
+              <div class="inbox-avatar">CH</div>
+              <div class="inbox-info">
+                <div class="inbox-name-row">
+                  <span>Casal Horizonte</span>
+                  <span class="inbox-time">6 h</span>
+                </div>
+                <div class="inbox-msg-preview">Boa noite, vamos conversar?</div>
+              </div>
+            </div>
+
+            <!-- Item 5 -->
+            <div class="inbox-item" onclick="openChat('Casal Serena', 'CS', 'Tava no vale, e vocês?')">
+              <div class="inbox-avatar">CS</div>
+              <div class="inbox-info">
+                <div class="inbox-name-row">
+                  <span>Casal Serena</span>
+                  <span class="inbox-time">6 h</span>
+                </div>
+                <div class="inbox-msg-preview">Tava no vale, e vocês?</div>
+              </div>
+            </div>
+
+            <!-- Item 6 -->
+            <div class="inbox-item" onclick="openChat('Rafael Jundiaí', 'RJ', 'Em Jundiaí, pertinho de você')">
+              <div class="inbox-avatar">RJ</div>
+              <div class="inbox-info">
+                <div class="inbox-name-row">
+                  <span>Rafael Jundiaí</span>
+                  <span class="inbox-time">7 h</span>
+                </div>
+                <div class="inbox-msg-preview">Em Jundiaí, pertinho de você</div>
+              </div>
+            </div>
+
+            <!-- Item 7 -->
+            <div class="inbox-item" onclick="openChat('Casal Maré', 'CM', 'Bora no vale no fim de semana?')">
+              <div class="inbox-avatar">CM</div>
+              <div class="inbox-info">
+                <div class="inbox-name-row">
+                  <span>Casal Maré</span>
+                  <span class="inbox-time">7 h</span>
+                </div>
+                <div class="inbox-msg-preview">Bora no vale no fim de semana?</div>
+              </div>
+            </div>
+
+            <!-- Item 8 -->
+            <div class="inbox-item" onclick="openChat('Sofia Praia Grande', 'SP', 'Então já sabe, meus pensamentos estão em você')">
+              <div class="inbox-avatar">SP</div>
+              <div class="inbox-info">
+                <div class="inbox-name-row">
+                  <span>Sofia Praia Grande</span>
+                  <span class="inbox-time">18 nov</span>
+                </div>
+                <div class="inbox-msg-preview">Então já sabe, meus pensamentos estão em você</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="inbox-footer-action">
+            <button class="btn btn-sm btn-ghost" style="width:100%; justify-content:center;" onclick="openChat('Casal Aurora', 'CA', 'E por aí, quais as novidades?')">
+              Abrir chat principal
+            </button>
+            <div style="font-size:11px; color:var(--subtle); margin-top:6px;">Chat sempre dentro do site • sem telefone</div>
+          </div>
+        </div>
+
+        <!-- Widget: Sorteio Mensal / Embaixador -->
+        <div class="sidebar-widget embaixador-widget">
+          <div style="font-size:32px; margin-bottom:8px;">🏆</div>
+          <h4>Sorteio Mensal</h4>
+          <p>
+            1 indicação verificada = 1 cupom.<br>
+            Prêmios nacionais todo mês para membros ativos.
+          </p>
+          <a class="btn btn-sm" style="width:100%; justify-content:center; background:#D97706;" href="#embaixador">Quero ser Embaixador</a>
+        </div>
+
+      </aside>
+
+    </div><!-- /main-grid -->
+
+    <!-- ══════════════════════════════════════════
+         SEÇÕES INFORMATIVAS (LANDING COMPLEMENTAR)
+    ══════════════════════════════════════════ -->
+    <div class="landing-sections">
+
+      <!-- Funcionalidades -->
+      <section id="funcionalidades" style="margin-bottom: 48px;">
+        <div class="section-heading">Funcionalidades</div>
+        <div class="section-subtext">Tudo projetado para sua discrição, segurança e controle total.</div>
+        <div class="features-grid">
+          <div class="f-card">
+            <div style="font-size:24px; margin-bottom:8px;">🛡️</div>
+            <h4>Verificação Anti-Fake</h4>
+            <p>Selfie + vídeo curto em tempo real. Selo de verificado no perfil. Sem bots nem fakes.</p>
+          </div>
+          <div class="f-card">
+            <div style="font-size:24px; margin-bottom:8px;">💬</div>
+            <h4>Chat Privado</h4>
+            <p>Só dentro do AMORA³, sem passar telefone ou WhatsApp. Conexão discreta.</p>
+          </div>
+          <div class="f-card">
+            <div style="font-size:24px; margin-bottom:8px;">📸</div>
+            <h4>Foto Rastreável</h4>
+            <p>Marca d'água por visualizador e sistema anti-print. Se vazar, identifica quem foi.</p>
+          </div>
+          <div class="f-card">
+            <div style="font-size:24px; margin-bottom:8px;">📍</div>
+            <h4>Bloqueio por Distância</h4>
+            <p>Escolha raio de 50 km ou mais. Ninguém da sua cidade ou trabalho vê seu perfil.</p>
+          </div>
+          <div class="f-card">
+            <div style="font-size:24px; margin-bottom:8px;">🎁</div>
+            <h4>Programa Embaixador</h4>
+            <p>Indicação gera cupom para sorteio mensal de prêmios nacionais.</p>
+          </div>
+          <div class="f-card">
+            <div style="font-size:24px; margin-bottom:8px;">🏨</div>
+            <h4>Motel Parceiro</h4>
+            <p>Permitir encontros entre 3 ou mais pessoas com registro dos demais ocupantes e segurança.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Preços -->
+      <section id="precos" style="margin-bottom: 48px;">
+        <div class="section-heading">Planos Acessíveis (Até R$ 30,00)</div>
+        <div class="section-subtext">Preços populares para os primeiros membros. Pagamento instantâneo no PIX.</div>
+        <div class="features-grid">
+          <div class="f-card" style="border-color:var(--primary); background:rgba(166,25,46,0.1);">
+            <div style="color:var(--accent); font-weight:700; font-size:12px; text-transform:uppercase;">★ Casal Liberal</div>
+            <div style="font-size:24px; font-weight:800; margin:8px 0; color:#fff;">R$ 19,90 <span style="font-size:13px; font-weight:400; color:var(--muted);">/mês</span></div>
+            <p>Perfil de casal unificado • Chat privado ilimitado • Foto com marca d'água • Bloqueio por distância</p>
+            <a class="btn btn-sm" style="margin-top:14px; width:100%; justify-content:center;" href="checkout.html">Assinar no PIX</a>
+          </div>
+          <div class="f-card">
+            <div style="color:var(--success); font-weight:700; font-size:12px; text-transform:uppercase;">Mulher Solo</div>
+            <div style="font-size:24px; font-weight:800; margin:8px 0; color:var(--success);">Grátis <span style="font-size:13px; font-weight:400; color:var(--muted);">(R$ 0,00)</span></div>
+            <p>Perfil 100% gratuito • Selo verificado anti-fake • Chat privado liberado • Anti-assédio ativo</p>
+            <a class="btn btn-sm" style="margin-top:14px; width:100%; justify-content:center; background:var(--success); color:#000;" href="checkout.html">Cadastrar Grátis</a>
+          </div>
+          <div class="f-card">
+            <div style="color:var(--muted); font-weight:700; font-size:12px; text-transform:uppercase;">Homem Solo</div>
+            <div style="font-size:24px; font-weight:800; margin:8px 0; color:#fff;">R$ 29,90 <span style="font-size:13px; font-weight:400; color:var(--muted);">/mês</span></div>
+            <p>Perfil verificado • Chat direto com casais e mulheres • Foto rastreável • Bloqueio por distância</p>
+            <a class="btn btn-sm" style="margin-top:14px; width:100%; justify-content:center;" href="checkout.html">Assinar no PIX</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Programa Embaixador -->
+      <section id="embaixador" style="margin-bottom: 48px;">
+        <div class="card-control" style="background:rgba(255,255,255,0.03); padding:28px;">
+          <div>
+            <div class="section-heading">Programa Embaixador</div>
+            <p style="font-size:14px; color:var(--muted); max-width:600px; margin-top:8px;">
+              Indique amigos e ganhe cupons para o sorteio mensal. Quanto mais indicados verificados, mais chances de ganhar.
+            </p>
+          </div>
+          <a class="btn" href="cadastro.html">Quero ser Embaixador</a>
+        </div>
+      </section>
+
+      <!-- Motel Parceiro -->
+      <section id="motel" style="margin-bottom: 48px;">
+        <div class="card-control" style="background:rgba(166,25,46,0.06); border-color:rgba(166,25,46,0.3); padding:28px;">
+          <div>
+            <div class="section-heading">Motel Parceiro</div>
+            <p style="font-size:14px; color:#ddd; max-width:680px; margin-top:8px; line-height:1.6;">
+              Nossa proposta para motéis: hoje encontros entre 3 ou mais pessoas acontecem escondidos, gerando risco para o motel e para os clientes. Queremos que os motéis permitam isso com registro dos demais ocupantes, oferecendo mais segurança para todos. O motel pode cobrar uma pequena taxa pelo ocupante extra ou oferecer como cortesia. Estamos contatando motéis para fechar essa parceria.
+            </p>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn" onclick="alert('Formulário de motel parceiro aberto. Em breve entraremos em contato.');">Seja um motel parceiro</button>
+            <button class="btn btn-ghost" onclick="alert('Você receberá um e-mail quando fecharmos parceria na sua cidade.');">Quero ser avisado quando fechar</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Termos de Uso Resumo -->
+      <div class="terms-box" id="termo">
+        <h4>⚖️ Termos de Uso — Resumo</h4>
+        <p>
+          Plataforma exclusiva para maiores de 18 anos. É terminantemente proibida a venda ou oferta de programas (prostituição). Todo conteúdo é monitorado ativamente. Perfis falsos são banidos permanentemente. Fotos e vídeos enviados ficam rastreáveis ao usuário que os visualizou com marca d'água oculta e visível.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- ══ FOOTER ══ -->
+    <footer>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <img src="logo-amora3.png" alt="AMORA³" style="height:24px; opacity:0.9; background:transparent; border:0;">
+        <span>AMORA³ • Rede social privada para adultos</span>
+      </div>
+      <div>
+        <a href="#funcionalidades">Funcionalidades</a> &nbsp;•&nbsp;
+        <a href="#precos">Preços</a> &nbsp;•&nbsp;
+        <a href="#embaixador">Embaixador</a> &nbsp;•&nbsp;
+        <a href="#motel">Motel</a> &nbsp;•&nbsp;
+        <a href="#termo">Termo</a>
+      </div>
+      <div>
+        Espaço privado para adultos verificados. Converse apenas dentro do site — sem telefone, sem WhatsApp.<br>
+        contato@amora3.com.br &nbsp;•&nbsp; © 2026 &nbsp;•&nbsp; +18
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       MODAL DE CHAT FLUTUANTE
+  ══════════════════════════════════════════ -->
+  <div class="chat-drawer" id="chatDrawer">
+    <div class="chat-drawer-header">
+      <div class="chat-target-info">
+        <div class="avatar-initials" style="width:34px; height:34px; font-size:12px;" id="chatTargetAvatar">CA</div>
+        <div>
+          <div style="font-size:14px; font-weight:700; color:#fff;" id="chatTargetName">Casal Aurora</div>
+          <div style="font-size:11px; color:var(--success);">● Online no site</div>
+        </div>
+      </div>
+      <button class="chat-close-btn" onclick="closeChat()">✕</button>
+    </div>
+
+    <div class="chat-drawer-body" id="chatMessages">
+      <div class="chat-watermark">AMORA³ ANTI-PRINT</div>
+      <div style="text-align:center; font-size:11px; color:var(--subtle); margin-bottom:8px;">
+        🔒 Conversa protegida contra print. Não troque telefone.
+      </div>
+      <div class="chat-bubble them" id="chatInitialMsg">
+        E por aí, quais as novidades?
+      </div>
+    </div>
+
+    <form class="chat-drawer-footer" onsubmit="sendChatMessage(event)">
+      <input type="text" class="chat-input" id="chatInput" placeholder="Mensagem segura..." autocomplete="off">
+      <button type="submit" class="btn btn-sm">Enviar</button>
+    </form>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       MODAL DE CRIAR POST
+  ══════════════════════════════════════════ -->
+  <div class="modal-overlay" id="postModal">
+    <div class="modal-box">
+      <h3>Publicar no feed verificado</h3>
+      <textarea class="modal-textarea" id="modalPostText" placeholder="Compartilhe uma ideia, plano para o fim de semana ou convite com discrição..."></textarea>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <span style="font-size:12px; color:var(--muted);">📷 Foto com marca d'água ativada</span>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="alert('Selecione uma imagem do seu dispositivo para proteger.');">Anexar foto</button>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeNewPostModal()">Cancelar</button>
+        <button type="button" class="btn btn-sm" onclick="publishNewPost()">Publicar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SCRIPTS INTERATIVOS
+  ══════════════════════════════════════════ -->
+  <script>
+    // Filtro por Distância
+    function filterByDistance(maxKm, btn) {
+      document.querySelectorAll('#distanceFilterGroup .distance-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const posts = document.querySelectorAll('#postsContainer .post-card');
+      let visibleCount = 0;
+
+      posts.forEach(post => {
+        const dist = parseInt(post.getAttribute('data-distance') || '0', 10);
+        if (dist <= maxKm) {
+          post.style.display = 'block';
+          visibleCount++;
+        } else {
+          post.style.display = 'none';
+        }
+      });
+
+      document.getElementById('feedCountSubtitle').innerHTML = 
+        `Só assinantes verificados publicam. Curtir é livre. Comentar é grátis, desde que não seja ofensivo. Chat só para assinantes.. <strong>${visibleCount} posts</strong> exibidos para raio de ${maxKm === 9999 ? 'Brasil todo' : maxKm + ' km'}`;
+    }
+
+    // Curtir Post
+    function toggleLike(id, btn) {
+      const likesElem = document.getElementById(`likes-${id}`);
+      let current = parseInt(likesElem.textContent, 10);
+      if (btn.classList.contains('liked')) {
+        btn.classList.remove('liked');
+        btn.innerHTML = '❤️ Curtir';
+        likesElem.textContent = current - 1;
+      } else {
+        btn.classList.add('liked');
+        btn.innerHTML = '❤️ Curtido!';
+        likesElem.textContent = current + 1;
+      }
+    }
+
+    // Comentar Post
+    function commentPost(author) {
+      const comment = prompt(`Adicionar comentário para ${author}:`);
+      if (comment && comment.trim()) {
+        alert('Seu comentário foi registrado e enviado para moderação anti-spam.');
+      }
+    }
+
+    // Abas do Feed (Seguindo / Para você / Todos)
+    function switchFeedTab(tabName, btn) {
+      document.querySelectorAll('.feed-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const posts = document.querySelectorAll('#postsContainer .post-card');
+      if (tabName === 'seguindo') {
+        posts.forEach((p, idx) => { p.style.display = (idx % 2 === 0) ? 'block' : 'none'; });
+      } else {
+        posts.forEach(p => p.style.display = 'block');
+      }
+    }
+
+    // Abas da Inbox
+    function switchInboxTab(tab, btn) {
+      document.querySelectorAll('.inbox-header-tabs .inbox-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      if (tab === 'arquivadas') {
+        document.getElementById('inboxList').innerHTML = '<div style="padding:20px; text-align:center; color:var(--subtle); font-size:13px;">Nenhuma conversa arquivada.</div>';
+      } else {
+        location.reload();
+      }
+    }
+
+    // Chat Drawer
+    function openChat(name, initials, lastMsg) {
+      document.getElementById('chatTargetName').textContent = name;
+      document.getElementById('chatTargetAvatar').textContent = initials;
+      document.getElementById('chatInitialMsg').textContent = lastMsg;
+      document.getElementById('chatDrawer').classList.add('open');
+      document.getElementById('chatInput').focus();
+    }
+    function closeChat() {
+      document.getElementById('chatDrawer').classList.remove('open');
+    }
+    function sendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const container = document.getElementById('chatMessages');
+      const bubble = document.createElement('div');
+      bubble.className = 'chat-bubble me';
+      bubble.textContent = text;
+      container.appendChild(bubble);
+      input.value = '';
+      container.scrollTop = container.scrollHeight;
+
+      // Resposta automática simulada após 1 segundo
+      setTimeout(() => {
+        const reply = document.createElement('div');
+        reply.className = 'chat-bubble them';
+        reply.textContent = 'Mensagem recebida com discrição. Adorei seu contato!';
+        container.appendChild(reply);
+        container.scrollTop = container.scrollHeight;
+      }, 1000);
+    }
+
+    // Modal Novo Post
+    function openNewPostModal() {
+      document.getElementById('postModal').classList.add('open');
+      document.getElementById('modalPostText').focus();
+    }
+    function closeNewPostModal() {
+      document.getElementById('postModal').classList.remove('open');
+    }
+    function publishNewPost() {
+      const text = document.getElementById('modalPostText').value.trim();
+      if (!text) {
+        alert('Escreva algo para postar.');
+        return;
+      }
+      alert('Post publicado com sucesso no feed com verificação anti-print!');
+      closeNewPostModal();
+    }
+
+    // Tema
+    function changeTheme(theme) {
+      document.body.className = '';
+      if (theme !== 'default') {
+        document.body.classList.add(`theme-${theme}`);
+      }
+    }
+
+    // Ajustar privacidade
+    function adjustPrivacy() {
+      const option = prompt('Quem pode iniciar chat com você?\n1. Todos os membros verificados\n2. Apenas membros que você curtir\n3. Ninguém (modo invisível)', '1');
+      if (option) {
+        alert('Preferência de privacidade atualizada com sucesso!');
+      }
+    }
+  </script>
+
+  <!-- BARRA DE BAIXO NO CELULAR -->
+  <nav class="bottombar"><a href="index.html">🏠<br>Início</a><a href="feed.html" class="ativo">📰<br>Feed</a><a href="#" onclick="openNewPostModal();return false;">✨<br>Criar</a><a href="#" onclick="openChat('INBOX','IN','Chat privado');return false;">💬<br>Chat</a><a href="perfil.html">👤<br>Conta</a></nav>
+  <div style="text-align:center;padding:14px;color:#666;font-size:11px;">🐝 COLMEIA V11 • LOGO DA INDEX • 24/11</div>
+</body>
+</html>
